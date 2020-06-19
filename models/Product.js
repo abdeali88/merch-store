@@ -12,7 +12,6 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
-      required: true,
       maxlength: 2000,
     },
     size: {
@@ -48,10 +47,12 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    photo: {
-      data: Buffer,
-      contentType: String,
-    },
+    images: [
+      {
+        data: Buffer,
+        contentType: String,
+      },
+    ],
   },
   { timestamps: true }
 );

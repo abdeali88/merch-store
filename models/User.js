@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
-const uuidv1 = require('uuid/v1');
+const { v1: uuidv1 } = require('uuid');
 
 const userSchema = new mongoose.Schema(
   {
@@ -62,13 +62,13 @@ userSchema
     return this._password;
   });
 
-userSchema.method = {
+userSchema.methods = {
   authenticate: function (plainpassword) {
     return this.securePassword(plainpassword) === this.encrypt_password;
   },
 
   securePassword: function (plainpassword) {
-    if (!password) return '';
+    if (!plainpassword) return '';
     try {
       return crypto
         .createHmac('sha256', this.salt)
