@@ -11,17 +11,50 @@ exports.signup = async (req, res) => {
     return res.status(422).json({ errors: errors.array() });
   }
   const { firstname, lastname, email, password } = req.body;
+
   try {
-    let user = new User(req.body);
+    let user = await User.findOne({ email: email });
+    if (user) {
+      return res.status(400).json({
+        errors: [{ msg: 'This email already exists!' }],
+      });
+    }
+
+    user = new User(req.body);
 
     await user.save();
 
-    const { firstname, lastname, email, _id, role } = user;
+    const payload = {
+      _id: user._id,
+    };
 
-    res.status(201).json({ _id, firstname, lastname, email, role });
+    const token = jwt.sign(payload, config.get('jwtSecret'), {
+      expiresIn: '1hr',
+    });
+
+    if (!token) {
+      return res.status(500).json({
+        errors: [{ msg: 'Issue with server. Please try again later!' }],
+      });
+    }
+
+    res.cookie('token', token, { expires: new Date(Date.now() + 3600) });
+
+    res.json({
+      token: token,
+      user: {
+        _id: user._id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({
+      errors: [{ msg: 'Issue with server. Please try again later!' }],
+    });
   }
 };
 
@@ -53,18 +86,16 @@ exports.signin = async (req, res) => {
     });
 
     if (!token) {
-      return res
-        .status(500)
-        .json({ errors: [{ msg: 'Token generation error' }] });
+      return res.status(500).json({
+        errors: [{ msg: 'Issue with server. Please try again later!' }],
+      });
     }
 
     res.cookie('token', token, { expires: new Date(Date.now() + 3600) });
 
     const { _id, firstname, lastname, role } = user;
 
-    res
-      .status(201)
-      .json({ token: token, user: { _id, email, firstname, lastname, role } });
+    res.json({ token: token, user: { _id, email, firstname, lastname, role } });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -74,7 +105,7 @@ exports.signin = async (req, res) => {
 exports.signout = (req, res) => {
   res.clearCookie('token');
   res.json({
-    message: 'User signout successful',
+    msg: 'User signout successful',
   });
 };
 

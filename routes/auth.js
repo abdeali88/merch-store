@@ -6,10 +6,12 @@ const { signup, signin, signout, isSignedIn } = require('../controllers/auth');
 router.post(
   '/signup',
   [
-    check('firstname', 'Name should have minimum 3 characters!').isLength({
-      min: 3,
-    }),
-    check('lastname', 'Name should have minimum 3 characters!').isLength({
+    check('firstname', 'First name should have minimum 3 characters!').isLength(
+      {
+        min: 3,
+      }
+    ),
+    check('lastname', 'Last name should have minimum 3 characters!').isLength({
       min: 3,
     }),
     check('email', 'Please enter a valid email!').isEmail(),
