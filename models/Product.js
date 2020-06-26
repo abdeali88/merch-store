@@ -42,6 +42,7 @@ const productSchema = new mongoose.Schema(
     },
     stock: {
       type: Number,
+      trim: true,
     },
     sold: {
       type: Number,

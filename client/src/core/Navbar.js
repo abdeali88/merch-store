@@ -1,9 +1,23 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { signout, isAuthenticated } from '../auth/helper/index';
 import { withRouter } from 'react-router';
+import { getCartProducts } from '../user/helper/userapicalls';
 
 const Navbar = ({ history }) => {
+  // const { user, token } = isAuthenticated();
+
+  // const [cartCount, setCartCount] = useState(0);
+
+  // useEffect(() => {
+  //   if (isAuthenticated()) {
+  //     console.log('NAV IN');
+  //     getCartProducts(user, token).then((getCartProducts) => {
+  //       setCartCount(getCartProducts.length);
+  //     });
+  //   }
+  // }, []);
+
   return (
     <Fragment>
       <nav className='navbar bg-dark'>
@@ -24,7 +38,7 @@ const Navbar = ({ history }) => {
           <li>
             <NavLink activeClassName='activeLink' to='/cart'>
               <i className='fa fa-shopping-bag text-white mr-1 nav-icons'> </i>
-              <span className='hide-sm'>{' Cart'}</span>
+              <span className='hide-sm'>{' Cart'}</span>{' '}
             </NavLink>
           </li>
           {isAuthenticated() && isAuthenticated().user.role === 0 && (
@@ -38,8 +52,8 @@ const Navbar = ({ history }) => {
           {isAuthenticated() && isAuthenticated().user.role === 1 && (
             <li>
               <NavLink activeClassName='activeLink' to='/admin/dashboard'>
-                <i className='fa fa-user text-white mr-1 nav-icons'></i>
-                <span className='hide-sm'>{' A.Dashboard'}</span>
+                <i className='fa fa-user-shield text-white mr-1 nav-icons'></i>
+                <span className='hide-sm'>{' Admin'}</span>
               </NavLink>
             </li>
           )}

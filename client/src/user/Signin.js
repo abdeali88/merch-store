@@ -51,9 +51,9 @@ const Signin = ({ history }) => {
       ) : (
         <Fragment>
           {' '}
-          <div className='jumbotron bg-dark text-white text-center mb-1 pb-1 mt-1'>
+          <div className='jumbotron bg-dark text-white text-center mb-1 pb-1'>
             <h2 className='display-4'>Sign In!</h2>
-            <p className='lead'>Login to your account now.</p>
+            <p className='lead'>Login to order now !</p>
           </div>
           <div className='row mb-5 pb-5'>
             <div className='col-md-6 col-sm-8 col-10 offset-md-3 offset-sm-2 offset-1 text-left'>

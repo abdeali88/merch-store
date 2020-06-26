@@ -6,9 +6,11 @@ const {
   getProductById,
   createProduct,
   getProduct,
-  getImages,
+  getSingleImage,
+  getAllImages,
   removeProduct,
   getAllProducts,
+  sameProduct,
   //   updateProduct,
 } = require('../controllers/product');
 const { getUserById } = require('../controllers/user');
@@ -25,11 +27,20 @@ router.post(
 );
 
 router.get('/product/:productId', getProduct);
-router.get('/product/images/:productId', getImages);
+
+router.get('/product/image/:productId', getSingleImage);
+router.get('/product/images/:productId', getAllImages);
+
 router.get('/products', getAllProducts);
 
 router.delete('/product/:productId/:userId', removeProduct);
 
-router.put('/product/:productId/:userId', createProduct);
+router.put(
+  '/product/:productId/:userId',
+  isSignedIn,
+  isAuthenticated,
+  isAdmin,
+  createProduct
+);
 
 module.exports = router;

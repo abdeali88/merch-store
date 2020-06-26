@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import './styles.css';
 import Home from './core/Home';
 import Navbar from './core/Navbar';
 import Footer from './core/Footer';
@@ -9,6 +10,13 @@ import UserDashBoard from './user/UserDashBoard';
 import AdminDashBoard from './user/AdminDashBoard';
 import PrivateRoute from './auth/helper/PrivateRoute';
 import AdminRoute from './auth/helper/AdminRoute';
+import AddCategory from './admin/AddCategory';
+import AddProduct from './admin/AddProduct';
+import ManageProduct from './admin/ManageProduct';
+import ManageCategory from './admin/ManageCategory';
+import EditProduct from './admin/EditProduct';
+import EditCategory from './admin/EditCategory';
+import Cart from './user/Cart';
 
 function Routes() {
   return (
@@ -27,10 +35,41 @@ function Routes() {
               exact
               component={UserDashBoard}
             />
+            <PrivateRoute path='/cart' exact component={Cart} />
             <AdminRoute
               path='/admin/dashboard'
               exact
               component={AdminDashBoard}
+            />
+            <AdminRoute
+              path='/admin/create/category'
+              exact
+              component={AddCategory}
+            />
+            <AdminRoute
+              path='/admin/manage/category'
+              exact
+              component={ManageCategory}
+            />
+            <AdminRoute
+              path='/admin/create/product'
+              exact
+              component={AddProduct}
+            />
+            <AdminRoute
+              path='/admin/manage/product'
+              exact
+              component={ManageProduct}
+            />
+            <AdminRoute
+              path='/admin/update/product/:productId'
+              exact
+              component={EditProduct}
+            />
+            <AdminRoute
+              path='/admin/update/category/:categoryId'
+              exact
+              component={EditCategory}
             />
           </Switch>
         </main>

@@ -14,7 +14,7 @@ exports.getProductById = async (req, res, next, id) => {
       return res.status(400).json({ msg: 'No Product found!' });
     }
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ msg: 'Issue with server! Please try again later.' });
   }
   next();
 };
@@ -26,7 +26,12 @@ exports.getProduct = (req, res) => {
 };
 
 //separate middleware for getting images, so it can load after other content
-exports.getImages = (req, res, next) => {
+exports.getSingleImage = (req, res, next) => {
+  return res.send(req.product.images[0]);
+  next();
+};
+
+exports.getAllImages = (req, res, next) => {
   return res.send(req.product.images);
   next();
 };
@@ -37,19 +42,23 @@ exports.removeProduct = async (req, res) => {
     res.json({ msg: 'Product removed' });
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server! Please try again later.' });
   }
 };
 
 //create or update product
 exports.createProduct = (req, res) => {
-  const form = formidable({ multiples: true, maxFileSize: 300000 });
+  // console.log(req);
+  const form = formidable({
+    multiples: true,
+    keepExtensions: true,
+  });
   form.parse(req, async (err, fields, files) => {
+    // console.log(fields);
+    // console.log(files);
     const { name, size, color, material, price, stock, category } = fields;
-
-    if (err) {
-      return res.status(400).json({ error: 'Maximum File Size is 300KB!' });
-    }
 
     if (
       !name ||
@@ -60,23 +69,41 @@ exports.createProduct = (req, res) => {
       !category ||
       !stock
     ) {
-      return res.status(400).json({ error: 'Please fill all the fields!' });
+      return res
+        .status(400)
+        .json({ msg: 'Please fill all the required fields!' });
     }
 
-    if (!files.images) {
-      return res.status(400).json({ error: 'Please upload an image!' });
+    if (!Number.isInteger(Number(price))) {
+      return res.status(400).json({ msg: 'Price must be a valid number!' });
     }
 
-    // return res.json(files.images);
+    if (!Number.isInteger(Number(stock))) {
+      return res.status(400).json({ msg: 'Stock must be a valid number!' });
+    }
 
-    let product = { ...fields };
-    product.images = [];
+    // console.log(files);
+
+    if (Object.keys(files).length === 0) {
+      return res.status(400).json({ msg: 'Please upload an image!' });
+    }
 
     //files.images returns an array for multiple images or a single object for single image
     //converting files.images into array in case of single object/image
     files.images = Array.isArray(files.images)
       ? [...files.images]
       : [files.images];
+
+    files.images.forEach((file) => {
+      if (file.size > 300000) {
+        return res.status(400).json({ msg: 'Max file size is 300KB!' });
+      }
+    });
+
+    // return res.json(files.images);
+
+    let product = { ...fields };
+    product.images = [];
 
     files.images.forEach((image) => {
       product.images.push({
@@ -97,31 +124,38 @@ exports.createProduct = (req, res) => {
         createdproduct = new Product(product);
         createdproduct.save();
       }
+      res.json(createdproduct);
     } catch (err) {
       console.error(err.message);
-      return res.status(500).json({ msg: 'Server error' });
+      return res
+        .status(500)
+        .json({ msg: 'Issue with server! Please try again later.' });
     }
-
-    res.json(createdproduct);
   });
 };
 
-//product listing
+//product listing for user
 exports.getAllProducts = async (req, res) => {
   let limit = req.query.limit ? parseInt(req.query.limit) : 8;
   let sortBy = req.query.sortBy ? req.query.sortBy : '_id';
 
-  const products = await Product.find()
-    .select('-images')
-    .populate('category', 'name')
-    .sort([[sortBy, 'asc']])
-    .limit(limit);
-
-  if (products.length === 0) {
-    return res.status(404).json({ message: 'No products found!' });
+  try {
+    const products = await Product.find()
+      .select('-images')
+      .populate('category', ['_id', 'name'])
+      .sort([[sortBy, 'asc']])
+      .limit(limit);
+    res.json(products);
+  } catch (err) {
+    console.error(err.message);
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server! Please try again later.' });
   }
 
-  res.json(products);
+  // if (products.length === 0) {
+  //   return res.status(404).json({ msg: 'No products found!' });
+  // }
 };
 
 //get all distinct categories present in the products
@@ -129,12 +163,14 @@ exports.getAllUniqueCategories = async (req, res) => {
   try {
     const categories = await Product.distinct('category');
     if (categories.length === 0) {
-      return res.status(404).json({ message: 'No categories found!' });
+      return res.status(404).json({ msg: 'No categories found!' });
     }
     res.json(categories);
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server! Please try again later.' });
   }
 };
 
@@ -153,7 +189,9 @@ exports.updateStocks = async (req, res, next) => {
     await Product.bulkWrite(operations);
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server! Please try again later.' });
   }
   next();
 };
@@ -197,7 +235,7 @@ exports.updateStocks = async (req, res, next) => {
 //       await product.save();
 //     } catch (err) {
 //       console.error(err.message);
-//       res.status(500).send('Server error');
+//       res.status(500).send('Issue with server! Please try again later.');
 //     }
 
 //     return res.json(product);

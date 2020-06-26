@@ -8,6 +8,11 @@ const cartProductSchema = new mongoose.Schema(
       ref: 'Product',
       required: true,
     },
+    user: {
+      type: ObjectId,
+      ref: 'User',
+      required: true,
+    },
     qty: {
       type: Number,
       default: 1,

@@ -1,14 +1,18 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import NavPanel from './NavPanel';
 import { Link, withRouter } from 'react-router-dom';
-import { getCategories, addProduct } from './helper/adminapicall';
+import {
+  getCategories,
+  getProduct,
+  updateProduct,
+} from './helper/adminapicall';
 import Spinner from '../core/Spinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { isAuthenticated, signout } from '../auth/helper';
 import Select from 'react-select';
 
-const AddProduct = ({ history }) => {
+const EditProduct = ({ history, match }) => {
   const { user, token } = isAuthenticated();
 
   const [values, setvalues] = useState({
@@ -19,7 +23,7 @@ const AddProduct = ({ history }) => {
     description: '',
     price: '',
     stock: '',
-    category: '',
+    category: { label: '', value: '' },
     categories: [],
     formData: '',
     loading: true,
@@ -42,22 +46,35 @@ const AddProduct = ({ history }) => {
   } = values;
 
   useEffect(() => {
-    getCategories()
-      .then((categories) => {
-        setvalues({
-          ...values,
-          categories: categories.map((category) => ({
-            label: category.name,
-            value: category._id,
-          })),
-          formData: new FormData(),
-          loading: false,
+    getProduct(match.params.productId)
+      .then((product) => {
+        getCategories().then((categories) => {
+          setvalues({
+            name: product.name,
+            material: product.material,
+            color: product.color,
+            size: product.size,
+            description: product.description ? product.description : '',
+            price: product.price,
+            stock: product.stock,
+            category: {
+              label: product.category ? product.category.name : '',
+              value: product.category ? product.category._id : 0,
+            },
+            categories: categories.map((category) => ({
+              label: category.name,
+              value: category._id,
+            })),
+            formData: new FormData(),
+            success: false,
+            loading: false,
+          });
         });
       })
       .catch((err) => {
         toast.error('Something went wrong. Please try again later!');
       });
-  }, [getCategories]);
+  }, [match.params.productId]);
 
   const onChange = (e) => {
     if (e.target.name === 'images') {
@@ -67,22 +84,33 @@ const AddProduct = ({ history }) => {
       }
     } else {
       const value = e.target.value;
-      formData.set(e.target.name, value);
       setvalues({ ...values, [e.target.name]: value });
     }
   };
 
   const onSelect = (option) => {
-    formData.set('category', option.value);
-    setvalues({ ...values, category: option.value });
+    setvalues({ ...values, category: option });
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    formData.set('name', name);
+    formData.set('material', material);
+    formData.set('color', color);
+    formData.set('category', category.value);
+    formData.set('size', size);
+    formData.set('price', price);
+    formData.set('stock', stock);
+    formData.set('description', description);
 
     setvalues({ ...values, success: false, loading: true });
     try {
-      const res = await addProduct(user, token, formData);
+      const res = await updateProduct(
+        user,
+        token,
+        match.params.productId,
+        formData
+      );
       if (res.data) {
         setvalues({
           name: '',
@@ -92,15 +120,15 @@ const AddProduct = ({ history }) => {
           description: '',
           price: '',
           stock: '',
-          category: '',
+          category: {},
           categories: [],
           formData: '',
           loading: false,
           success: true,
         });
-        toast.success('Product created!');
+        toast.success('Product Updated!');
         setTimeout(() => {
-          history.push('/admin/dashboard');
+          history.push('/admin/manage/product');
         }, 2000);
       } else {
         setvalues({
@@ -134,7 +162,7 @@ const AddProduct = ({ history }) => {
               <Fragment>
                 <div className='bg-dark text-white mb-1 pb-1'>
                   <p className='lead font-big pb-2 line-below'>
-                    Create a product here !
+                    Update the product here !
                   </p>
                   <form
                     onSubmit={(e) => onSubmit(e)}
@@ -178,6 +206,7 @@ const AddProduct = ({ history }) => {
                             onChange={(option) => onSelect(option)}
                             options={values.categories}
                             className='text-dark'
+                            defaultValue={values.category}
                           />
                         </div>
                         <div className='form-group'>
@@ -289,4 +318,4 @@ const AddProduct = ({ history }) => {
   );
 };
 
-export default withRouter(AddProduct);
+export default withRouter(EditProduct);

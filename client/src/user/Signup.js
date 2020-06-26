@@ -52,7 +52,7 @@ const Signup = ({ history }) => {
         <Spinner />
       ) : (
         <Fragment>
-          <div className='jumbotron bg-dark text-white text-center mb-1 pb-1 mt-1'>
+          <div className='jumbotron bg-dark text-white text-center mb-1 pb-1'>
             <h2 className='display-4'>Sign Up!</h2>
             <p className='lead'>Create your account now.</p>
           </div>

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('../models/User');
+const { CartProduct } = require('../models/Order');
 const Order = require('../models/Order');
 
 //gets the userId and appends user to req.profile
@@ -16,7 +17,9 @@ exports.getUserById = async (req, res, next, userId) => {
       return res.status(400).json({ msg: 'User not found' });
     }
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
   }
   next();
 };
@@ -51,7 +54,9 @@ exports.updateUser = async (req, res) => {
       return res.status(400).json({ msg: 'User not found' });
     }
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
   }
 };
 
@@ -70,7 +75,9 @@ exports.getOrders = async (req, res) => {
       return res.status(400).json({ msg: 'No orders found' });
     }
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
   }
 };
 
@@ -100,7 +107,90 @@ exports.pushOrderInPurchaseList = async (req, res, next) => {
     );
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
   }
   next();
+};
+
+exports.addToCart = async (req, res) => {
+  userId = req.profile._id;
+  productId = req.product._id;
+
+  try {
+    let cartProduct = await CartProduct.findOne({
+      user: userId,
+      product: productId,
+    });
+
+    if (cartProduct) {
+      return res.status(400).json({ msg: 'Already in cart!' });
+    }
+    cartProduct = new CartProduct({
+      user: userId,
+      product: productId,
+    });
+    cartProduct.save();
+    res.json({ msg: 'Added to cart!' });
+  } catch (err) {
+    console.log(err.message);
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
+  }
+};
+
+exports.removeFromCart = async (req, res) => {
+  userId = req.profile._id;
+  productId = req.product._id;
+
+  try {
+    const product = await CartProduct.findOneAndDelete({
+      user: userId,
+      product: productId,
+    });
+    if (!product) {
+      return res.status(400).json({ msg: 'Not in cart!' });
+    }
+    return res.json({ msg: 'Removed from cart!' });
+  } catch (err) {
+    console.log(err.message);
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
+  }
+};
+
+exports.getCartProducts = async (req, res) => {
+  userId = req.profile._id;
+  try {
+    const cartProducts = await CartProduct.find({ user: userId });
+    return res.json(cartProducts);
+  } catch (err) {
+    console.log(err.message);
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
+  }
+};
+
+exports.getCart = async (req, res) => {
+  userId = req.profile._id;
+  try {
+    const cart = await CartProduct.find({ user: userId }).populate('product', [
+      '_id',
+      'name',
+      'size',
+      'color',
+      'material',
+      'price',
+    ]);
+    return res.json(cart);
+  } catch (err) {
+    console.log(err.message);
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
+  }
 };

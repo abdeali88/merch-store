@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import { api } from '../../utility/api';
 
 export const signup = async (formData) => {
   try {
@@ -10,13 +11,14 @@ export const signup = async (formData) => {
       },
     };
     const body = JSON.stringify(formData);
-    const res = await axios.post('/api/signup', body, config);
+    const res = await axios.post(`${api}/signup`, body, config);
     setUser(res.data);
     toast.success('Registered Successfully');
     return true;
   } catch (err) {
-    const errors = err.response.data.errors;
-    toast.error(errors[0].msg);
+    if (err.response) {
+      toast.error(err.response.data.msg);
+    }
     return false;
   }
 };
@@ -29,12 +31,13 @@ export const signin = async (formData) => {
       },
     };
     const body = JSON.stringify(formData);
-    const res = await axios.post('/api/signin', body, config);
+    const res = await axios.post(`${api}/signin`, body, config);
     setUser(res.data);
     return true;
   } catch (err) {
-    const errors = err.response.data.errors;
-    toast.error(errors[0].msg);
+    if (err.response) {
+      toast.error(err.response.data.msg);
+    }
     return false;
   }
 };
@@ -49,7 +52,7 @@ export const signout = async () => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('jwt');
     try {
-      await axios.get('/api/signout');
+      await axios.get(`${api}/signout`);
     } catch (err) {
       console.log(err);
     }

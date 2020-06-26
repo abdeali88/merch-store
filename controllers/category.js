@@ -16,34 +16,51 @@ exports.getCategoryById = async (req, res, next, id) => {
 };
 
 exports.createCategory = async (req, res) => {
+  if (req.body.name === '') {
+    return res.status(422).json({ msg: 'Category name is required!' });
+  }
   try {
-    const category = new Category(req.body);
+    let category;
+    category = await Category.findOne({ name: req.body.name });
+    if (category) {
+      return res.status(400).json({ msg: 'Category already exists!!' });
+    }
+
+    category = new Category(req.body);
+
     await category.save();
     res.json({ category });
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
   }
 };
 
 exports.getCategory = (req, res) => {
-  return res.json({ category: req.category });
+  return res.json(req.category);
 };
 
 exports.getAllCategory = async (req, res) => {
   try {
     const categories = await Category.find();
-    if (categories.length === 0) {
-      return res.status(404).json({ message: 'No categories found!' });
-    }
+    // if (categories.length === 0) {
+    //   return res.json({ msg: 'No categories found!' });
+    // }
     res.json(categories);
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
   }
 };
 
 exports.updateCategory = async (req, res) => {
+  if (req.body.name === '') {
+    return res.status(422).json({ msg: 'Category name is required!' });
+  }
   try {
     const category = req.category;
     category.name = req.body.name;
@@ -52,7 +69,9 @@ exports.updateCategory = async (req, res) => {
     res.json(updatedCategory);
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
   }
 };
 
@@ -62,6 +81,8 @@ exports.removeCategory = async (req, res) => {
     res.json({ msg: 'Category removed' });
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({ msg: 'Server error' });
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
   }
 };

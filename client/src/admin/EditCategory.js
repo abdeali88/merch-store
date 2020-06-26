@@ -1,22 +1,36 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import NavPanel from './NavPanel';
 import { Link, withRouter } from 'react-router-dom';
 import Spinner from '../core/Spinner';
-import { addCategory } from './helper/adminapicall';
+import { getCategory, updateCategory } from './helper/adminapicall';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { isAuthenticated, signout } from '../auth/helper';
 
-const AddCategory = ({ history }) => {
+const EditCategory = ({ history, match }) => {
   const { user, token } = isAuthenticated();
 
   const [formData, setFormData] = useState({
     name: '',
-    loading: false,
+    loading: true,
     success: false,
   });
 
   const { name, loading, success } = formData;
+
+  useEffect(() => {
+    getCategory(match.params.categoryId)
+      .then((category) => {
+        setFormData({
+          ...formData,
+          name: category.name,
+          loading: false,
+        });
+      })
+      .catch((err) => {
+        toast.error('Something went wrong. Please try again later!');
+      });
+  }, []);
 
   const onChange = (e) => setFormData({ ...formData, name: e.target.value });
 
@@ -24,7 +38,9 @@ const AddCategory = ({ history }) => {
     e.preventDefault();
     setFormData({ ...formData, success: false, loading: true });
     try {
-      const res = await addCategory(user, token, { name });
+      const res = await updateCategory(user, token, match.params.categoryId, {
+        name,
+      });
       //res.data means ok response from backend
       //res.response means error from backend
       if (res.data) {
@@ -33,9 +49,9 @@ const AddCategory = ({ history }) => {
           loading: false,
           success: true,
         });
-        toast.success(`Category "${res.data.category.name}" created `);
+        toast.success(`Category updated! `);
         setTimeout(() => {
-          history.push('/admin/dashboard');
+          history.push('/admin/manage/category');
         }, 2000);
       } else {
         setFormData({
@@ -68,7 +84,7 @@ const AddCategory = ({ history }) => {
             <div className='col-lg-8 ml-lg-4 col-md-12 col-sm-12 col-12 ml-sm-4 ml-4'>
               <div className='bg-dark text-white mb-1 pb-1'>
                 <p className='lead font-big pb-2 line-below'>
-                  Create a category here !
+                  Update the category here !
                 </p>
                 <form onSubmit={(e) => onSubmit(e)}>
                   <div className='form-group'>
@@ -81,7 +97,6 @@ const AddCategory = ({ history }) => {
                       type='text'
                       name='name'
                       value={name}
-                      placeholder='For ex- Summer'
                       autoFocus
                       onChange={(e) => onChange(e)}
                     />
@@ -95,7 +110,7 @@ const AddCategory = ({ history }) => {
                   </button>
 
                   <Link
-                    to='/admin/dashboard'
+                    to='/admin/manage/category'
                     className='btn btn-info rounded mt-3'
                   >
                     Back
@@ -110,4 +125,4 @@ const AddCategory = ({ history }) => {
   );
 };
 
-export default withRouter(AddCategory);
+export default withRouter(EditCategory);
