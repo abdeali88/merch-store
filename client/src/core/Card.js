@@ -32,9 +32,14 @@ const Card = ({
           await signout();
           history.push('/');
         }
+        if (res.response && res.response.data.msg === 'Product out of stock!') {
+          toast.error('Sorry. Product is out of stock!');
+          setLoading(false);
+        }
       }
     } catch (err) {
       toast.error('Something went wrong. Please try again later!');
+      setLoading(false);
     }
   };
 

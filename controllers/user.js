@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 const { CartProduct } = require('../models/Order');
 const Order = require('../models/Order');
+const Product = require('../models/Product');
 
 //gets the userId and appends user to req.profile
 exports.getUserById = async (req, res, next, userId) => {
@@ -127,6 +128,12 @@ exports.addToCart = async (req, res) => {
     if (cartProduct) {
       return res.status(400).json({ msg: 'Already in cart!' });
     }
+
+    let product = await Product.findById({ _id: productId });
+    if (product.stock === 0) {
+      return res.status(400).json({ msg: 'Product out of stock!' });
+    }
+
     cartProduct = new CartProduct({
       user: userId,
       product: productId,
@@ -162,6 +169,32 @@ exports.removeFromCart = async (req, res) => {
   }
 };
 
+exports.updateCart = async (req, res) => {
+  userId = req.profile._id;
+  productId = req.product._id;
+  qty = req.body.qty;
+
+  try {
+    const product = await CartProduct.findOne({
+      user: userId,
+      product: productId,
+    }).populate('product', 'stock');
+
+    if (qty > product.product.stock) {
+      return res.status(400).json({ msg: 'Product out of stock!' });
+    }
+
+    product.qty = qty;
+    product.save();
+    return res.json({ msg: 'Quantity updated!' });
+  } catch (err) {
+    console.log(err.message);
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
+  }
+};
+
 exports.getCartProducts = async (req, res) => {
   userId = req.profile._id;
   try {
@@ -175,18 +208,66 @@ exports.getCartProducts = async (req, res) => {
   }
 };
 
+//Bohot hard hack. Asynchronous ki wajeh se takleef. Lekin forEach ke baad hi execute hona chahiye response.json uske liye forEach ke bahar ek counter laga diya.
 exports.getCart = async (req, res) => {
   userId = req.profile._id;
   try {
-    const cart = await CartProduct.find({ user: userId }).populate('product', [
+    let cart = await CartProduct.find({ user: userId }).populate('product', [
       '_id',
       'name',
       'size',
       'color',
       'material',
       'price',
+      'stock',
+      'images',
     ]);
-    return res.json(cart);
+    let updated_cart = [];
+    if (cart.length === 0) {
+      return res.json(updated_cart);
+    }
+    let counter = 0;
+    cart.forEach(async (cartItem) => {
+      if (
+        cartItem.qty > cartItem.product.stock &&
+        cartItem.product.stock === 0
+      ) {
+        await CartProduct.findByIdAndDelete({ _id: cartItem._id });
+        counter += 1;
+        if (counter === cart.length) {
+          return res.json(updated_cart);
+        }
+      } else if (
+        cartItem.qty > cartItem.product.stock &&
+        cartItem.product.stock > 0
+      ) {
+        const item = await CartProduct.findOneAndUpdate(
+          { _id: cartItem._id },
+          { qty: cartItem.product.stock },
+          { new: true }
+        ).populate('product', [
+          '_id',
+          'name',
+          'size',
+          'color',
+          'material',
+          'price',
+          'stock',
+          'images',
+        ]);
+        updated_cart.push(item);
+        counter += 1;
+        if (counter === cart.length) {
+          return res.json(updated_cart);
+        }
+      } else {
+        updated_cart.push(cartItem);
+        counter += 1;
+        if (counter === cart.length) {
+          return res.json(updated_cart);
+        }
+      }
+    });
   } catch (err) {
     console.log(err.message);
     return res

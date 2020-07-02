@@ -9,6 +9,7 @@ const {
   getCartProducts,
   getCart,
   removeFromCart,
+  updateCart,
 } = require('../controllers/user');
 const { getProductById } = require('../controllers/product');
 const { isSignedIn, isAuthenticated } = require('../controllers/auth');
@@ -41,6 +42,13 @@ router.put(
   isSignedIn,
   isAuthenticated,
   removeFromCart
+);
+
+router.put(
+  '/user/update/cart/:userId/:productId',
+  isSignedIn,
+  isAuthenticated,
+  updateCart
 );
 
 router.get('/orders/user/:userId', isSignedIn, isAuthenticated, getOrders);

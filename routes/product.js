@@ -31,7 +31,7 @@ router.get('/product/:productId', getProduct);
 router.get('/product/image/:productId', getSingleImage);
 router.get('/product/images/:productId', getAllImages);
 
-router.get('/products', getAllProducts);
+router.post('/products', getAllProducts);
 
 router.delete('/product/:productId/:userId', removeProduct);
 

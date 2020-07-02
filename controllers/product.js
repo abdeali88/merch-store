@@ -136,26 +136,44 @@ exports.createProduct = (req, res) => {
 
 //product listing for user
 exports.getAllProducts = async (req, res) => {
-  let limit = req.query.limit ? parseInt(req.query.limit) : 8;
-  let sortBy = req.query.sortBy ? req.query.sortBy : '_id';
+  let catId = req.body.categories.map((cat) => cat.id);
+  let catName = req.body.categories.map((cat) => cat.name);
+  let sizes = req.body.sizes.map((size) => size.size);
+  let sizeCatName = req.body.sizes.map((size) => size.category);
+  let sortBy = req.body.sortBy;
+  let sortVal = req.body.sortVal;
 
   try {
-    const products = await Product.find()
-      .select('-images')
-      .populate('category', ['_id', 'name'])
-      .sort([[sortBy, 'asc']])
-      .limit(limit);
-    res.json(products);
+    if (catId.length === 0 && sizes.length === 0) {
+      const products = await Product.find()
+        .select('-images')
+        .populate('category', ['_id', 'name'])
+        .sort([[sortBy, sortVal]]);
+      return res.json(products);
+    } else if (catId.length > 0 && sizes.length === 0) {
+      const filteredProducts = await Product.find({
+        category: { $in: catId },
+      })
+        .select('-images')
+        .populate('category', ['_id', 'name'])
+        .sort([[sortBy, sortVal]]);
+      return res.json(filteredProducts);
+    } else {
+      const filteredProducts = await Product.find({
+        category: { $in: catId },
+        size: { $in: sizes },
+      })
+        .select('-images')
+        .populate('category', ['_id', 'name'])
+        .sort([[sortBy, sortVal]]);
+      return res.json(filteredProducts);
+    }
   } catch (err) {
     console.error(err.message);
     return res
       .status(500)
       .json({ msg: 'Issue with server! Please try again later.' });
   }
-
-  // if (products.length === 0) {
-  //   return res.status(404).json({ msg: 'No products found!' });
-  // }
 };
 
 //get all distinct categories present in the products

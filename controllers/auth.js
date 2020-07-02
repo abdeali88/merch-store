@@ -112,14 +112,14 @@ exports.isSignedIn = (req, res, next) => {
   const token = tokenList.split(' ')[1];
   //check if no token
   if (!token) {
-    return res.status(401).json({ msg: 'No token, Authorization denied!' });
+    return res.status(401).json({ msg: 'No token' });
   }
 
   //verify token
   try {
     jwt.verify(token, config.get('jwtSecret'), (error, decoded) => {
       if (error) {
-        return res.status(401).json({ msg: 'Token is not valid' });
+        return res.status(401).json({ msg: 'Invalid' });
       } else {
         req.auth = decoded;
         next();
