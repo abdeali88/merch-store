@@ -10,6 +10,7 @@ import { isAuthenticated, signout } from '../auth/helper';
 import { getCartProducts } from '../user/helper/userapicalls';
 import { withRouter } from 'react-router-dom';
 import { getCategories } from '../admin/helper/adminapicall';
+import { ConnectionStates } from 'mongoose';
 
 const Home = ({ history }) => {
   const { user, token } = isAuthenticated();
@@ -42,40 +43,44 @@ const Home = ({ history }) => {
 
   useEffect(() => {
     console.log('In');
-    getAllProducts([], [], '_id', 'asc')
-      .then((products) => {
+    const productsPromise = getAllProducts([], [], '_id', 'asc');
+
+    const categoriesPromise = getCategories();
+
+    const cartProductsPromise = getCartProducts(user, token);
+
+    Promise.all([productsPromise, categoriesPromise, cartProductsPromise])
+      .then((data) => {
+        const [products, categories, cartP] = data;
+        const inStockProducts = products.filter((prod) => prod.stock > 0);
         setProds({
-          products: products,
+          products: inStockProducts,
           loading: false,
         });
 
         setAllProducts(products);
 
-        getCategories().then((categories) => {
-          setCategories(
-            categories.map((category) => ({
-              id: category._id,
-              name: category.name,
-            }))
-          );
-        });
+        setCategories(
+          categories.map((category) => ({
+            id: category._id,
+            name: category.name,
+          }))
+        );
 
-        if (isAuthenticated()) {
-          getCartProducts(user, token, null).then((res) => {
-            if (res.data) {
-              setCartProducts(
-                res.data.map((cartProd) => ({
-                  user: cartProd.user,
-                  product: cartProd.product,
-                }))
-              );
-              setbuttonLoading(false);
-            } else if (res.response && res.response.status === 401) {
-              signout().then(() => {
-                history.push('/signin');
-              });
-            }
-          });
+        if (cartP !== 0) {
+          if (cartP.data) {
+            setCartProducts(
+              cartP.data.map((cartProd) => ({
+                user: cartProd.user,
+                product: cartProd.product,
+              }))
+            );
+            setbuttonLoading(false);
+          } else if (cartP.response && cartP.response.status === 401) {
+            signout().then(() => {
+              history.push('/signin');
+            });
+          }
         } else {
           setCartProducts([]);
           setbuttonLoading(false);
@@ -86,6 +91,7 @@ const Home = ({ history }) => {
       });
   }, [token]);
 
+  //Change Cart Products
   function addCartProducts(productId) {
     setCartProducts([...cartProducts, { user: user._id, product: productId }]);
   }
@@ -96,6 +102,7 @@ const Home = ({ history }) => {
     );
   }
 
+  //Category Filter
   function catSelect(catList, cat, sizeList) {
     let newSizeList = [...sizeList];
     allProducts.forEach((product) => {
@@ -119,6 +126,26 @@ const Home = ({ history }) => {
       });
   }
 
+  function catRemove(catList, cat, sizeList) {
+    setCatFilter(catList);
+
+    //Remove sizes of the corresponding removed category
+    sizeList = sizeList.filter((size) => cat.name !== size.category);
+
+    setSizeFilter(sizeList);
+    getAllProducts(catList, sizeList, sortBy, sortVal)
+      .then((products) => {
+        setProds({
+          products: products,
+          loading: false,
+        });
+      })
+      .catch((err) => {
+        toast.error('Something went wrong. Please try again later!');
+      });
+  }
+
+  //Size Filter
   function sizeSelect(catList, sizeList) {
     const sizeName = sizeList.map((size) => size.category);
     const newSizeList = [...sizeList];
@@ -136,29 +163,6 @@ const Home = ({ history }) => {
 
     getAllProducts(catList, newSizeList, sortBy, sortVal)
       .then((products) => {
-        console.log(newSizeList);
-
-        setProds({
-          products: products,
-          loading: false,
-        });
-      })
-      .catch((err) => {
-        toast.error('Something went wrong. Please try again later!');
-      });
-  }
-
-  function catRemove(catList, cat, sizeList) {
-    setCatFilter(catList);
-
-    //Remove sizes of the corresponding removed category
-    sizeList = sizeList.filter((size) => cat.name !== size.category);
-
-    setSizeFilter(sizeList);
-    getAllProducts(catList, sizeList, sortBy, sortVal)
-      .then((products) => {
-        console.log(catList);
-        console.log(sizeList);
         setProds({
           products: products,
           loading: false,
@@ -170,8 +174,11 @@ const Home = ({ history }) => {
   }
 
   function sizeRemove(catList, sizeList, remSize) {
-    const newSizeList = [...sizeList];
-    if (
+    let newSizeList = [...sizeList];
+
+    if (sizeList.length === 0) {
+      newSizeList = [];
+    } else if (
       sizeList.filter((size) => size.category === remSize.category).length === 0
     ) {
       allProducts.forEach((product) => {
@@ -196,6 +203,7 @@ const Home = ({ history }) => {
       });
   }
 
+  //Sort Filter
   function sortFilter(val) {
     setSort({
       sortBy: 'price',
@@ -240,6 +248,7 @@ const Home = ({ history }) => {
     );
   });
 
+  //Options in Size Filter
   const catSizes = [];
   allProducts
     .map((prod) => ({
@@ -275,9 +284,9 @@ const Home = ({ history }) => {
         <Spinner />
       ) : (
         <Fragment>
-          <div className='container mt-4'>
+          <div className='container mt-4 mb-5'>
             <div className='row mb-5'>
-              <div className='col-lg-4 col-md-4 offset-lg-0 offset-md-0 col-sm-8 offset-sm-2 offset-1 col-10'>
+              <div className='col-lg-4 col-md-4 offset-lg-0 offset-md-0 col-sm-8 offset-sm-2 offset-1 col-10 mb-md-0 mb-2'>
                 <Multiselect
                   options={categories} // Options to display in the dropdown
                   onSelect={(catList, cat) =>
@@ -296,30 +305,26 @@ const Home = ({ history }) => {
                 />
               </div>
 
-              {catFilter.length === 0 ? (
-                <Fragment />
-              ) : (
-                <div className='col-lg-4 col-md-4 offset-lg-0 offset-md-0 col-sm-8 offset-sm-2 offset-1 col-10'>
-                  <Multiselect
-                    options={catSizes}
-                    onSelect={(sizeList) => sizeSelect(catFilter, sizeList)}
-                    onRemove={(sizeList, size) =>
-                      sizeRemove(catFilter, sizeList, size)
-                    }
-                    groupBy='category'
-                    id='size'
-                    displayValue='size'
-                    // selectedValues={sizeFilter}
-                    showCheckbox={true}
-                    placeholder='Size'
-                    avoidHighlightFirstOption={true}
-                    style={filterStyle}
-                    disable={catFilter.length === 0 ? true : false}
-                  />
-                </div>
-              )}
+              <div className='col-lg-4 col-md-4 offset-lg-0 offset-md-0 col-sm-8 offset-sm-2 offset-1 col-10 mb-md-0 mb-2'>
+                <Multiselect
+                  options={catSizes}
+                  onSelect={(sizeList) => sizeSelect(catFilter, sizeList)}
+                  onRemove={(sizeList, size) =>
+                    sizeRemove(catFilter, sizeList, size)
+                  }
+                  groupBy='category'
+                  id='size'
+                  displayValue='size'
+                  // selectedValues={sizeFilter}
+                  showCheckbox={true}
+                  placeholder='Size'
+                  avoidHighlightFirstOption={true}
+                  style={filterStyle}
+                  disable={catFilter.length === 0 ? true : false}
+                />
+              </div>
 
-              <div className='col-lg-3 col-md-3 offset-lg-0 offset-md-0 offset-1 col-sm-8 offset-sm-2 col-10 text-dark'>
+              <div className='col-lg-4 col-md-4 offset-lg-0 offset-md-0 offset-1 col-sm-8 offset-sm-2 col-10 text-dark'>
                 <Select
                   name='sort'
                   onChange={(option) => sortFilter(option.value)}

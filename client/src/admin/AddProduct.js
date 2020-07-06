@@ -16,10 +16,10 @@ const AddProduct = ({ history }) => {
     material: '',
     color: '',
     size: '',
-    description: '',
     price: '',
     stock: '',
     category: '',
+    gender: '',
     categories: [],
     formData: '',
     loading: true,
@@ -31,11 +31,11 @@ const AddProduct = ({ history }) => {
     material,
     color,
     size,
-    description,
     price,
     stock,
     categories,
     category,
+    gender,
     formData,
     loading,
     success,
@@ -72,9 +72,14 @@ const AddProduct = ({ history }) => {
     }
   };
 
-  const onSelect = (option) => {
+  const onSelectCategory = (option) => {
     formData.set('category', option.value);
     setvalues({ ...values, category: option.value });
+  };
+
+  const onSelectGender = (option) => {
+    formData.set('gender', option.value);
+    setvalues({ ...values, gender: option.value });
   };
 
   const onSubmit = async (e) => {
@@ -89,9 +94,9 @@ const AddProduct = ({ history }) => {
           material: '',
           color: '',
           size: '',
-          description: '',
           price: '',
           stock: '',
+          gender: '',
           category: '',
           categories: [],
           formData: '',
@@ -175,7 +180,7 @@ const AddProduct = ({ history }) => {
                           </label>
                           <Select
                             name='category'
-                            onChange={(option) => onSelect(option)}
+                            onChange={(option) => onSelectCategory(option)}
                             options={values.categories}
                             className='text-dark'
                           />
@@ -195,15 +200,17 @@ const AddProduct = ({ history }) => {
                         </div>
                         <div className='form-group'>
                           <label className='text-light'>
-                            {/* <i className='fa fa-star-of-life fa-xs text-danger'></i> */}
-                            {'  '}Description
+                            <i className='fa fa-star-of-life fa-xs text-danger'></i>
+                            {'  '}Gender
                           </label>
-                          <input
-                            type='text'
-                            name='description'
-                            className='form-control'
-                            value={description}
-                            onChange={(e) => onChange(e)}
+                          <Select
+                            name='gender'
+                            onChange={(option) => onSelectGender(option)}
+                            options={[
+                              { label: 'Male', value: 'Male' },
+                              { label: 'Female', value: 'Female' },
+                            ]}
+                            className='text-dark'
                           />
                         </div>
                       </div>

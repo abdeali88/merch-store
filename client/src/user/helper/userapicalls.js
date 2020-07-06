@@ -62,6 +62,15 @@ export const updateCart = async (productId, qty, user, token) => {
 };
 
 export const getCartProducts = async (user, token) => {
+  if (
+    user === undefined ||
+    token === undefined ||
+    user === null ||
+    token === null
+  ) {
+    return 0;
+  }
+
   try {
     const config = {
       headers: {
@@ -87,6 +96,39 @@ export const getCart = async (user, token) => {
       },
     };
     const res = await axios.get(`${api}/user/cart/${user._id}`, config);
+    return res;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+export const checkInStock = async (user, token) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await axios.get(
+      `${api}/user/check/cart/stock/${user._id}`,
+      config
+    );
+    return res;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+export const getCartWithTotal = async (user, token) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await axios.get(`${api}/user/cart/total/${user._id}`, config);
     return res;
   } catch (err) {
     console.log(err);

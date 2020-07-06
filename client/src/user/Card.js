@@ -4,7 +4,6 @@ import { updateCart, removeFromCart } from './helper/userapicalls';
 import { withRouter } from 'react-router-dom';
 import { signout } from '../auth/helper';
 import { toast } from 'react-toastify';
-import spinner3 from '../core/spinner3.gif';
 
 const Card = ({
   cartItem,
@@ -14,24 +13,13 @@ const Card = ({
   updateTotal,
   totalLoad,
   setTotalLoad,
-  // updateCartItems,
-  // qtyLoad,
-  // setqtyLoad,
-  // removeCartItem,
-  // removeLoading,
-  // setRemoveLoading,
 }) => {
   const [item, setItem] = useState(cartItem);
 
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-
-  // }, [item]);
-
   const changeQty = async (e) => {
     const curr_qty = Number(e.target.value);
-    // console.log(curr_qty);
     let new_qty;
     const operation = e.target.getAttribute('name');
     console.log(operation);
@@ -56,7 +44,6 @@ const Card = ({
         token
       );
       if (res.data) {
-        // updateCartItems(new_qty, item._id);
         setItem({
           ...item,
           qty: new_qty,
@@ -87,12 +74,11 @@ const Card = ({
       setTotalLoad(true);
       const res = await removeFromCart(item.product._id, user, token);
       if (res.data) {
-        // removeCartItem(item._id);
         updateTotal('remove', item.product.price * item.qty);
         setItem(null);
         setLoading(false);
         setTotalLoad(false);
-        toast.error(`"${item.product.name}" removed from cart !`);
+        toast.error(`"${item.product.name}" removed from cart!`);
       } else {
         if (res.response && res.response.status === 401) {
           await signout();
@@ -118,10 +104,15 @@ const Card = ({
                 <CartImage image={item.product.images[0]} />
               </div>
 
-              <div className='col-lg-5 col-md-5 col-sm-4 col-5'>
-                <p className='lead font-weight-bold mt-3 font-sm-head'>
-                  {item.product.name}
-                </p>
+              <div className='col-lg-5 col-md-5 col-sm-7 col-7'>
+                <div className='row mt-1'>
+                  <div className='col-12'>
+                    <p className='lead font-sm-body font-weight-bold mb-0 pb-0'>
+                      {item.product.name}
+                    </p>
+                    {/* <p className='font-sm-body'>{item.product.gender}</p> */}
+                  </div>
+                </div>
 
                 <div className='row pt-2 font-sm-body'>
                   <div className='col-12'>
@@ -139,24 +130,26 @@ const Card = ({
                     <span className='ml-1'>{item.product.material}</span>
                   </div>
                 </div>
-                <div className='row pt-4 font-sm-body'>
+                <div className='row pt-2 font-sm-body hide-lg'>
                   <div className='col-12'>
+                    Price: <span className='ml-1'> {item.product.price} ₹</span>
+                  </div>
+                </div>
+
+                <div className='row pt-4 font-sm-body'>
+                  <div className='col-3'>
                     <button
-                      className='btn btn-danger rounded'
+                      className='btn btn-danger rounded remove-cart'
                       name='remove'
                       onClick={(e) => removeItem(e)}
                       disabled={loading || totalLoad ? true : false}
                     >
-                      <i className='fa fa-trash-alt mr-1'></i>
-                      <span className='hide-sm'>{' Remove'}</span>
+                      <i className='fa fa-trash-alt '></i>
+                      {/* <span className='hide-sm'>{' Remove'}</span> */}
                     </button>
                   </div>
-                </div>
-              </div>
-              <div className='col-lg-3 col-md-3 col-sm-3 col-2 mt-2 font-sm-body'>
-                <div className='row '>
-                  <div className='col-12 text-left'>
-                    <div className='qty mt-5'>
+                  <div className='col-9'>
+                    <div className='qty mt-1'>
                       <button
                         className='minus bg-dark'
                         name='minus'
@@ -188,7 +181,23 @@ const Card = ({
                     </div>
                   </div>
                 </div>
+              </div>
 
+              <div className='col-lg-3 col-md-3 mt-5 pt-5 hide-small'>
+                <div className='row'>
+                  <div className='col-10 text-right'>
+                    <span>
+                      <i className='fas fa-tag mr-1'></i>
+                    </span>{' '}
+                    <span className='lead font-sm-head'>
+                      {item.product.price} ₹
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* <div className='col-lg-3 col-md-3 col-sm-3 col-2 mt-2 font-sm-body'>
+          
                 <div className='row pt-lg-5 mt-lg-5 pt-md-5 mt-md-5 pt-sm-3 mt-sm-3 pt-3 mt-3'>
                   {loading ? (
                     <div className='col-12 text-left'>
@@ -208,7 +217,7 @@ const Card = ({
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

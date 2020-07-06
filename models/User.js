@@ -25,11 +25,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
 
-    userinfo: {
-      type: String,
-      trim: true,
-    },
-
     encrypt_password: {
       type: String,
       required: true,

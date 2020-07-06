@@ -83,57 +83,37 @@ exports.getOrders = async (req, res) => {
 };
 
 //middleware
-exports.pushOrderInPurchaseList = async (req, res, next) => {
-  let purchases = [];
-  req.body.order.products.forEach((product) => {
-    purchases.push({
-      _id: product._id,
-      name: product.name,
-      size: product.size,
-      color: product.color,
-      description: product.description,
-      category: product.category,
-      quantity: product.quantity,
-      amount: req.body.order.amount,
-      transaction_id: req.body.order.transaction_id,
-    });
-  });
+// exports.pushOrderInPurchaseList = async (req, res, next) => {
+//   let purchases = [];
+//   req.body.order.products.forEach((product) => {
+//     purchases.push({
+//       product: product,
+//       amount: req.body.order.amount,
+//       order_id: req.body.order.transaction_id,
+//     });
+//   });
 
-  //store this in DB
-  try {
-    await User.findOneAndUpdate(
-      { _id: req.profile._id },
-      { $push: { purchases: purchases } },
-      { new: true }
-    );
-  } catch (err) {
-    console.error(err.message);
-    return res
-      .status(500)
-      .json({ msg: 'Issue with server. Please try again later!' });
-  }
-  next();
-};
+//   //store this in DB
+//   try {
+//     await User.findOneAndUpdate(
+//       { _id: req.profile._id },
+//       { $push: { purchases: purchases } },
+//       { new: true }
+//     );
+//   } catch (err) {
+//     console.error(err.message);
+//     return res
+//       .status(500)
+//       .json({ msg: 'Issue with server. Please try again later!' });
+//   }
+//   next();
+// };
 
 exports.addToCart = async (req, res) => {
   userId = req.profile._id;
   productId = req.product._id;
 
   try {
-    let cartProduct = await CartProduct.findOne({
-      user: userId,
-      product: productId,
-    });
-
-    if (cartProduct) {
-      return res.status(400).json({ msg: 'Already in cart!' });
-    }
-
-    let product = await Product.findById({ _id: productId });
-    if (product.stock === 0) {
-      return res.status(400).json({ msg: 'Product out of stock!' });
-    }
-
     cartProduct = new CartProduct({
       user: userId,
       product: productId,
@@ -153,13 +133,11 @@ exports.removeFromCart = async (req, res) => {
   productId = req.product._id;
 
   try {
-    const product = await CartProduct.findOneAndDelete({
+    await CartProduct.findOneAndDelete({
       user: userId,
       product: productId,
     });
-    if (!product) {
-      return res.status(400).json({ msg: 'Not in cart!' });
-    }
+
     return res.json({ msg: 'Removed from cart!' });
   } catch (err) {
     console.log(err.message);
@@ -208,7 +186,6 @@ exports.getCartProducts = async (req, res) => {
   }
 };
 
-//Bohot hard hack. Asynchronous ki wajeh se takleef. Lekin forEach ke baad hi execute hona chahiye response.json uske liye forEach ke bahar ek counter laga diya.
 exports.getCart = async (req, res) => {
   userId = req.profile._id;
   try {
@@ -219,23 +196,43 @@ exports.getCart = async (req, res) => {
       'color',
       'material',
       'price',
+      'images',
+    ]);
+    return res.json(cart);
+  } catch (err) {
+    console.log(err.message);
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
+  }
+};
+
+//Bohot hard hack. Asynchronous ki wajeh se takleef. Lekin forEach ke baad hi execute hona chahiye response.json uske liye forEach ke bahar ek counter laga diya.
+exports.checkInStock = async (req, res) => {
+  userId = req.profile._id;
+  try {
+    let cart = await CartProduct.find({ user: userId }).populate('product', [
+      '_id',
+      'name',
+      'size',
+      'color',
+      'material',
+      'price',
       'stock',
+      'gender',
       'images',
     ]);
     let updated_cart = [];
-    if (cart.length === 0) {
-      return res.json(updated_cart);
-    }
+    let errors = [];
+
     let counter = 0;
     cart.forEach(async (cartItem) => {
-      if (
-        cartItem.qty > cartItem.product.stock &&
-        cartItem.product.stock === 0
-      ) {
+      if (cartItem.product.stock === 0) {
         await CartProduct.findByIdAndDelete({ _id: cartItem._id });
+        errors.push(`${cartItem.product.name} is out of stock!`);
         counter += 1;
         if (counter === cart.length) {
-          return res.json(updated_cart);
+          return res.json({ cart: updated_cart, errors: errors });
         }
       } else if (
         cartItem.qty > cartItem.product.stock &&
@@ -256,15 +253,18 @@ exports.getCart = async (req, res) => {
           'images',
         ]);
         updated_cart.push(item);
+        errors.push(
+          `${cartItem.product.name} quantity is reduced to ${cartItem.product.stock}!`
+        );
         counter += 1;
         if (counter === cart.length) {
-          return res.json(updated_cart);
+          return res.json({ cart: updated_cart, errors: errors });
         }
       } else {
         updated_cart.push(cartItem);
         counter += 1;
         if (counter === cart.length) {
-          return res.json(updated_cart);
+          return res.json({ cart: updated_cart, errors: errors });
         }
       }
     });
@@ -274,4 +274,43 @@ exports.getCart = async (req, res) => {
       .status(500)
       .json({ msg: 'Issue with server. Please try again later!' });
   }
+};
+
+exports.getCartWithTotal = async (req, res) => {
+  userId = req.profile._id;
+  try {
+    let cart = await CartProduct.find({ user: userId }).populate('product', [
+      'price',
+      '_id',
+    ]);
+    const cartItems = cart.map((cartItem) => ({
+      ...cartItem._doc,
+      product: cartItem.product._id,
+    }));
+
+    const cartTotal = cart
+      .map((cartItem) => cartItem.product.price * cartItem.qty)
+      .reduce((a, b) => a + b, 0);
+
+    return res.json({ cartItems, total: cartTotal });
+  } catch (err) {
+    console.log(err.message);
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
+  }
+};
+
+//clear cart during order middleware
+exports.clearCart = async (req, res, next) => {
+  userId = req.profile._id;
+  try {
+    await CartProduct.deleteMany({ user: userId });
+  } catch (err) {
+    console.log(err.message);
+    return res
+      .status(500)
+      .json({ msg: 'Issue with server. Please try again later!' });
+  }
+  next();
 };

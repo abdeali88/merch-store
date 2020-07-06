@@ -1,6 +1,5 @@
 const { Order } = require('../models/Order');
 const Product = require('../models/Product');
-const mongoose = require('mongoose');
 
 exports.getOrderById = async (req, res, next, id) => {
   try {

@@ -58,7 +58,16 @@ exports.createProduct = (req, res) => {
   form.parse(req, async (err, fields, files) => {
     // console.log(fields);
     // console.log(files);
-    const { name, size, color, material, price, stock, category } = fields;
+    const {
+      name,
+      size,
+      color,
+      material,
+      price,
+      stock,
+      category,
+      gender,
+    } = fields;
 
     if (
       !name ||
@@ -67,7 +76,8 @@ exports.createProduct = (req, res) => {
       !material ||
       !price ||
       !category ||
-      !stock
+      !stock ||
+      !gender
     ) {
       return res
         .status(400)
@@ -198,7 +208,7 @@ exports.updateStocks = async (req, res, next) => {
   req.body.order.products.forEach((product) => {
     operations.push({
       updateOne: {
-        filter: { _id: product._id },
+        filter: { _id: product.product },
         update: { $inc: { sold: +product.qty, stock: -product.qty } },
       },
     });
@@ -213,49 +223,3 @@ exports.updateStocks = async (req, res, next) => {
   }
   next();
 };
-
-//CREATE PRODUCT
-// exports.createProduct = (req, res) => {
-//   const form = formidable({ multiples: true, maxFileSize: 300000 });
-//   form.parse(req, async (err, fields, files) => {
-//     const { name, size, color, material, price, stock, category } = fields;
-
-//     if (
-//       !name ||
-//       !size ||
-//       !color ||
-//       !material ||
-//       !price ||
-//       !category ||
-//       !stock
-//     ) {
-//       return res.status(400).json({ error: 'Please fill all the fields!' });
-//     }
-
-//     if (!files.images) {
-//       return res.status(400).json({ error: 'Please upload an image!' });
-//     }
-
-//     if (err) {
-//       return res.status(400).json({ error: 'Maximum File Size is 300KB!' });
-//     }
-
-//     let product = new Product(fields);
-
-//     files.images.forEach((image) => {
-//       product.images.push({
-//         data: fs.readFileSync(image.path),
-//         contentType: image.type,
-//       });
-//     });
-
-//     try {
-//       await product.save();
-//     } catch (err) {
-//       console.error(err.message);
-//       res.status(500).send('Issue with server! Please try again later.');
-//     }
-
-//     return res.json(product);
-//   });
-// };

@@ -26,7 +26,11 @@ const CartProduct = mongoose.model('CartProduct', cartProductSchema);
 const orderSchema = new mongoose.Schema(
   {
     products: [cartProductSchema],
-    transaction_id: String,
+    payment: {
+      razorpay_payment_id: String,
+      razorpay_order_id: String,
+    },
+
     amount: Number,
     user: {
       type: ObjectId,
@@ -41,11 +45,13 @@ const orderSchema = new mongoose.Schema(
     updated: Date,
 
     address: {
+      name: String,
       state: String,
       city: String,
       pincode: String,
       address1: String,
       address2: String,
+      contact: String,
     },
   },
   { timestamps: true }

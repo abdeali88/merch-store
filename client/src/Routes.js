@@ -17,6 +17,7 @@ import ManageCategory from './admin/ManageCategory';
 import EditProduct from './admin/EditProduct';
 import EditCategory from './admin/EditCategory';
 import Cart from './user/Cart';
+import Checkout from './user/Checkout';
 
 function Routes() {
   return (
@@ -36,6 +37,8 @@ function Routes() {
               component={UserDashBoard}
             />
             <PrivateRoute path='/cart' exact component={Cart} />
+            <PrivateRoute path='/checkout' exact component={Checkout} />
+
             <AdminRoute
               path='/admin/dashboard'
               exact

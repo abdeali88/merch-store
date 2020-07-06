@@ -40,7 +40,7 @@ const ManageProduct = ({ history }) => {
   };
 
   useEffect(() => {
-    getProducts()
+    getProducts([], [], '_id', 'asc')
       .then((products) => {
         setProds({
           products: products,
@@ -77,7 +77,7 @@ const ManageProduct = ({ history }) => {
                   products.map((product, index) => (
                     <div key={index} className='row line-below text-white mb-4'>
                       <div className='col-md-6 col-sm-12 col-12 mb-md-0 mb-sm-4 mb-4'>
-                        {product.name}
+                        {`${product.name} (${product.gender[0]})`}
                       </div>
                       <div className='col-md-2 col-sm-3 col-3 mb-md-0 mb-sm-4 mb-4'>
                         {product.color}

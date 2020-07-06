@@ -20,7 +20,7 @@ const EditProduct = ({ history, match }) => {
     material: '',
     color: '',
     size: '',
-    description: '',
+    gender: { label: '', value: '' },
     price: '',
     stock: '',
     category: { label: '', value: '' },
@@ -35,7 +35,7 @@ const EditProduct = ({ history, match }) => {
     material,
     color,
     size,
-    description,
+    gender,
     price,
     stock,
     categories,
@@ -54,7 +54,10 @@ const EditProduct = ({ history, match }) => {
             material: product.material,
             color: product.color,
             size: product.size,
-            description: product.description ? product.description : '',
+            gender: {
+              label: product.gender ? product.gender : '',
+              value: product.gender ? product.gender : 0,
+            },
             price: product.price,
             stock: product.stock,
             category: {
@@ -88,8 +91,12 @@ const EditProduct = ({ history, match }) => {
     }
   };
 
-  const onSelect = (option) => {
+  const onSelectCategory = (option) => {
     setvalues({ ...values, category: option });
+  };
+
+  const onSelectGender = (option) => {
+    setvalues({ ...values, gender: option });
   };
 
   const onSubmit = async (e) => {
@@ -101,7 +108,7 @@ const EditProduct = ({ history, match }) => {
     formData.set('size', size);
     formData.set('price', price);
     formData.set('stock', stock);
-    formData.set('description', description);
+    formData.set('gender', gender.value);
 
     setvalues({ ...values, success: false, loading: true });
     try {
@@ -117,7 +124,7 @@ const EditProduct = ({ history, match }) => {
           material: '',
           color: '',
           size: '',
-          description: '',
+          gender: {},
           price: '',
           stock: '',
           category: {},
@@ -203,7 +210,7 @@ const EditProduct = ({ history, match }) => {
                           </label>
                           <Select
                             name='category'
-                            onChange={(option) => onSelect(option)}
+                            onChange={(option) => onSelectCategory(option)}
                             options={values.categories}
                             className='text-dark'
                             defaultValue={values.category}
@@ -224,15 +231,18 @@ const EditProduct = ({ history, match }) => {
                         </div>
                         <div className='form-group'>
                           <label className='text-light'>
-                            {/* <i className='fa fa-star-of-life fa-xs text-danger'></i> */}
-                            {'  '}Description
+                            <i className='fa fa-star-of-life fa-xs text-danger'></i>
+                            {'  '}Gender
                           </label>
-                          <input
-                            type='text'
-                            name='description'
-                            className='form-control'
-                            value={description}
-                            onChange={(e) => onChange(e)}
+                          <Select
+                            name='gender'
+                            onChange={(option) => onSelectGender(option)}
+                            options={[
+                              { label: 'Male', value: 'Male' },
+                              { label: 'Female', value: 'Female' },
+                            ]}
+                            className='text-dark'
+                            defaultValue={values.gender}
                           />
                         </div>
                       </div>

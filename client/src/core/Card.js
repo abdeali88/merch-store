@@ -69,9 +69,11 @@ const Card = ({
       <div className='card text-white bg-dark product-card'>
         <div className='card-body'>
           <Image product={product} />
-          <p className='lead bg-secondary text-wrap'>{product.name}</p>
+          <p className='lead bg-secondary font-sm-head text-wrap'>
+            {product.name}
+          </p>
 
-          <div className='row pt-2'>
+          <div className='row pt-2 font-sm-body'>
             <div className='col-5'>
               Size:{' '}
               <span className='ml-1 font-weight-bold'>{product.size}</span>
@@ -91,30 +93,32 @@ const Card = ({
               ></span>
             </div>
           </div>
-          <div className='row pt-4'>
-            <div className='col-md-6 col-sm-8 col-6'>
+          <div className='row pt-4 '>
+            <div className='col-md-6 col-sm-6 col-6'>
               <span className='price-tag'>
                 <i className='fas fa-tag mr-1'></i>{' '}
-                <span className='lead font-weight-bold'>{product.price} ₹</span>{' '}
+                <span className='lead font-sm-body font-weight-bold'>
+                  {product.price} ₹
+                </span>{' '}
               </span>
             </div>
-            <div className='col-md-6 col-sm-4 col-6'>
+            <div className='col-md-6 col-sm-6 col-6'>
               {loading ? (
                 <img src={spinner3} style={{ width: '45px', height: '45px' }} />
               ) : (
                 <Fragment>
                   {!present ? (
                     <button
-                      className='btn btn-success rounded'
+                      className='btn btn-success rounded card-button'
                       onClick={() => {
                         isAuthenticated() ? addCart() : history.push('/signin');
                       }}
                     >
-                      <i className='fas fa-cart-plus fa-lg'></i>{' '}
+                      <i className='fas fa-cart-plus fa-lg '></i>{' '}
                     </button>
                   ) : (
                     <button
-                      className='btn btn-danger rounded'
+                      className='btn btn-danger rounded card-button'
                       onClick={() => {
                         isAuthenticated()
                           ? removeCart()
