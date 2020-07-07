@@ -26,11 +26,6 @@ exports.getProduct = (req, res) => {
 };
 
 //separate middleware for getting images, so it can load after other content
-exports.getSingleImage = (req, res, next) => {
-  return res.send(req.product.images[0]);
-  next();
-};
-
 exports.getAllImages = (req, res, next) => {
   return res.send(req.product.images);
   next();

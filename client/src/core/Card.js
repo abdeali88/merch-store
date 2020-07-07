@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment } from 'react';
 import Image from './helper/Image';
 import { addToCart, removeFromCart } from '../user/helper/userapicalls';
 import { isAuthenticated, signout } from '../auth/helper';

@@ -135,3 +135,33 @@ export const getCartWithTotal = async (user, token) => {
     return err;
   }
 };
+
+export const getOrder = async (user, token, orderId) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await axios.get(`${api}/order/${user._id}/${orderId}`, config);
+    return res;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+export const getAllOrders = async (user, token) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await axios.get(`${api}/orders/${user._id}`, config);
+    return res;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};

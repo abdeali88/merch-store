@@ -8,17 +8,17 @@ const AdminDashBoard = () => {
   const adminInfo = (
     <div className='col-lg-8 ml-lg-4 col-md-12 col-sm-12 col-12'>
       <div className='card mb-4'>
-        <h4 className='card-header'>Admin Information</h4>
+        <h4 className='card-header card-borders'>Admin Information</h4>
         <ul className='list-group'>
-          <li className='list-group-item'>
+          <li className='list-group-item card-item'>
             <span className='badge badge-success mr-2'>Name:</span>{' '}
             {user.firstname} {user.lastname}
           </li>
-          <li className='list-group-item'>
+          <li className='list-group-item card-item'>
             <span className='badge badge-success mr-2'>Email:</span>{' '}
             {user.email}
           </li>
-          <li className='card-footer'></li>
+          <li className='card-footer card-borders'></li>
         </ul>
       </div>
     </div>

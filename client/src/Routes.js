@@ -18,6 +18,9 @@ import EditProduct from './admin/EditProduct';
 import EditCategory from './admin/EditCategory';
 import Cart from './user/Cart';
 import Checkout from './user/Checkout';
+import Thankyou from './user/Thankyou';
+import PageNotFound from './core/PageNotFound';
+import Order from './user/Order';
 
 function Routes() {
   return (
@@ -38,6 +41,12 @@ function Routes() {
             />
             <PrivateRoute path='/cart' exact component={Cart} />
             <PrivateRoute path='/checkout' exact component={Checkout} />
+            <PrivateRoute
+              path='/thankyou/:orderId'
+              exact
+              component={Thankyou}
+            />
+            <PrivateRoute path='/order/:orderId' exact component={Order} />
 
             <AdminRoute
               path='/admin/dashboard'
@@ -74,6 +83,7 @@ function Routes() {
               exact
               component={EditCategory}
             />
+            <Route component={PageNotFound} />
           </Switch>
         </main>
         <footer>

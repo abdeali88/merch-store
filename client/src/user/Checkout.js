@@ -112,9 +112,7 @@ const Checkout = ({ history }) => {
         razorpay_signature,
       });
 
-      console.log('Payment Verified');
-
-      await axios.post(
+      const orderResponse = await axios.post(
         `${api}/order/create/${user._id}`,
         {
           order: {
@@ -123,7 +121,7 @@ const Checkout = ({ history }) => {
               razorpay_payment_id,
               razorpay_order_id,
             },
-            amount: amount,
+            amount: Number(amount / 100),
             address: address,
           },
         },
@@ -134,7 +132,9 @@ const Checkout = ({ history }) => {
         }
       );
 
-      toast.success('Payment Successful');
+      const order_id = orderResponse.data._id;
+
+      history.push(`/thankyou/${order_id}`);
 
       setCart({ ...cart, loading: false });
     } catch (err) {

@@ -24,10 +24,8 @@
     "formidable": "^1.2.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.19",
-    "multiselect-react-dropdown": "^1.5.4",
     "nodemon": "^2.0.4",
     "razorpay": "^2.0.6",
-    "react-responsive-carousel": "^3.2.8",
     "uuid": "^8.1.0"
   },
   "devDependencies": {

@@ -46,6 +46,8 @@ const Cart = ({ history }) => {
           signout().then(() => {
             history.push('/signin');
           });
+        } else {
+          history.push('/');
         }
       })
       .catch((err) => {

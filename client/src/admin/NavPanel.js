@@ -5,11 +5,11 @@ const NavPanel = () => {
   return (
     <div className='col-lg-3 ml-lg-3 col-md-12 mb-md-5 col-sm-12 mb-sm-5 col-12 mb-5 mr-md-5 ml-1'>
       <div className='card'>
-        <h4 className='card-header bg-dark text-white   '>
+        <h4 className='card-header bg-dark text-white'>
           <i className='fa fa-user-shield mr-2'></i> Admin Navigation{' '}
         </h4>
         <ul className='list-group'>
-          <li className='list-group-item'>
+          <li className='list-group-item card-item'>
             <Link
               to='/admin/create/category'
               className='nav-link text-dark font-weight-bold'
@@ -18,7 +18,7 @@ const NavPanel = () => {
               Create Category
             </Link>
           </li>
-          <li className='list-group-item'>
+          <li className='list-group-item card-item'>
             <Link
               to='/admin/manage/category'
               className='nav-link text-dark font-weight-bold'
@@ -27,7 +27,7 @@ const NavPanel = () => {
               Manage Categories
             </Link>
           </li>
-          <li className='list-group-item'>
+          <li className='list-group-item card-item'>
             <Link
               to='/admin/create/product'
               className='nav-link text-dark font-weight-bold'
@@ -36,7 +36,7 @@ const NavPanel = () => {
               Create Product
             </Link>
           </li>
-          <li className='list-group-item'>
+          <li className='list-group-item card-item'>
             <Link
               to='/admin/manage/product'
               className='nav-link text-dark font-weight-bold'
@@ -45,7 +45,7 @@ const NavPanel = () => {
               Manage Products
             </Link>
           </li>
-          <li className='list-group-item'>
+          <li className='list-group-item card-item'>
             <Link
               to='/admin/orders'
               className='nav-link text-dark font-weight-bold'
@@ -55,7 +55,7 @@ const NavPanel = () => {
             </Link>
           </li>
         </ul>
-        <div className='card-footer'></div>
+        <div className='card-footer card-borders'></div>
       </div>
     </div>
   );

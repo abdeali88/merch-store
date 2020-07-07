@@ -3,9 +3,9 @@ import { getOrder } from './helper/userapicalls';
 import { isAuthenticated, signout } from '../auth/helper';
 import { withRouter } from 'react-router-dom';
 import Spinner from '../core/Spinner';
-import CartImage from './CartImage';
+import Moment from 'react-moment';
 
-const Thankyou = ({ match, history }) => {
+const Order = ({ match, history }) => {
   const { user, token } = isAuthenticated();
 
   const [order, setOrder] = useState({});
@@ -40,32 +40,41 @@ const Thankyou = ({ match, history }) => {
         <Spinner />
       ) : (
         <div className='container mt-5 mb-5'>
-          <div className='row text-white' style={{ letterSpacing: '0.019em' }}>
-            <div className='col-12'>
-              <p className='lead font-big font-sm-head'>
-                <i className='fas fa-handshake mr-1'></i> Thankyou for shopping
-                with Fashion Hub.
-              </p>
-            </div>
-            <div className='col-12'>
-              <p className='lead font-big font-sm-head'>
-                <span className='line-below pb-3'>
-                  <i className='fa fa-box-open mr-1'></i> Your order is
-                  confirmed. Sit back, and relax!
-                </span>
-              </p>
-            </div>
-          </div>
-          <div className='row text-white mt-5 '>
-            <div className='col-12'>
-              <h5 className='font-sm-head font-weight-light'>
-                Order id : <span className=' ml-1'>#{order._id}</span>
-              </h5>
-            </div>
-            <div className='col-12'>
-              <h5 className='font-sm-head font-weight-light'>
-                Amount : <span className=' ml-1'>{order.amount} ₹</span>
-              </h5>
+          <div className='row mt-5 '>
+            <div className='col-lg-8 col-md-10 col-12'>
+              <div className='card mb-4 '>
+                <h4 className='card-header card-borders font-sm-head'>
+                  <i className='fa fa-box-open fa-sm mr-1 '></i> Order
+                  Information
+                </h4>
+                <ul className='list-group font-sm-body'>
+                  <li className='list-group-item card-item'>
+                    <span className='badge badge-success mr-2 p-1'>
+                      Order id:
+                    </span>{' '}
+                    {order._id}
+                  </li>
+                  <li className='list-group-item card-item'>
+                    <span className='badge badge-success mr-2 p-1'>
+                      Amount:
+                    </span>{' '}
+                    {order.amount} ₹
+                  </li>
+                  <li className='list-group-item card-item'>
+                    <span className='badge badge-success mr-2 p-1'>
+                      Date&nbsp;&nbsp;:
+                    </span>{' '}
+                    <Moment format='DD/MM/YYYY'>{order.createdAt}</Moment>
+                  </li>
+                  <li className='list-group-item card-item'>
+                    <span className='badge badge-success mr-2 p-1'>
+                      Status:
+                    </span>{' '}
+                    {order.status}
+                  </li>
+                  <li className='card-footer card-borders'></li>
+                </ul>
+              </div>
             </div>
           </div>
           <div className='row mt-3'>
@@ -156,4 +165,4 @@ const Thankyou = ({ match, history }) => {
   );
 };
 
-export default withRouter(Thankyou);
+export default withRouter(Order);

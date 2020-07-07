@@ -7,6 +7,7 @@ const {
   createOrder,
   getAllOrders,
   updateOrderStatus,
+  getOrder,
 } = require('../controllers/order');
 const { updateStocks } = require('../controllers/product');
 
@@ -23,6 +24,8 @@ router.post(
 );
 
 router.get('/orders/:userId', isSignedIn, isAuthenticated, getAllOrders);
+
+router.get('/order/:userId/:orderId', isSignedIn, isAuthenticated, getOrder);
 
 // router.get(
 //   '/order/status/:userId',

@@ -1,15 +1,18 @@
 const { Order } = require('../models/Order');
-const Product = require('../models/Product');
 
 exports.getOrderById = async (req, res, next, id) => {
   try {
-    const order = await Product.findById(id).populate('products.product', [
+    const order = await Order.findById(id).populate('products.product', [
       'name',
       'price',
       'size',
+      'images',
+      'material',
       'color',
     ]);
     if (!order) {
+      console.log('Nahi mila re baba');
+
       return res.status(400).json({ msg: 'Order not found!' });
     }
     req.order = order;
@@ -21,6 +24,10 @@ exports.getOrderById = async (req, res, next, id) => {
     res.status(500).send('Server error');
   }
   next();
+};
+
+exports.getOrder = async (req, res) => {
+  return res.json(req.order);
 };
 
 exports.createOrder = async (req, res) => {
@@ -37,13 +44,9 @@ exports.createOrder = async (req, res) => {
 
 exports.getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.profile._id }).populate(
-      'user',
-      ['_id', 'firstname', 'lastname']
-    );
-    if (orders.length === 0) {
-      return res.status(400).json({ msg: 'No Orders!' });
-    }
+    const orders = await Order.find({ user: req.profile._id }).sort({
+      createdAt: 'desc',
+    });
     res.json(orders);
   } catch (err) {
     console.error(err.message);

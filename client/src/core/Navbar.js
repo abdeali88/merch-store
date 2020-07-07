@@ -37,7 +37,7 @@ const Navbar = ({ history }) => {
           </li>
           <li>
             <NavLink activeClassName='activeLink' to='/cart'>
-              <i className='fa fa-shopping-bag text-white mr-1 nav-icons'> </i>
+              <i className='fa fa-shopping-cart text-white mr-1 nav-icons'> </i>
               <span className='hide-sm'>{' Cart'}</span>{' '}
             </NavLink>
           </li>

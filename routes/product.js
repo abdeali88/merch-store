@@ -6,11 +6,9 @@ const {
   getProductById,
   createProduct,
   getProduct,
-  getSingleImage,
   getAllImages,
   removeProduct,
   getAllProducts,
-  sameProduct,
   //   updateProduct,
 } = require('../controllers/product');
 const { getUserById } = require('../controllers/user');
@@ -28,7 +26,6 @@ router.post(
 
 router.get('/product/:productId', getProduct);
 
-router.get('/product/image/:productId', getSingleImage);
 router.get('/product/images/:productId', getAllImages);
 
 router.post('/products', getAllProducts);

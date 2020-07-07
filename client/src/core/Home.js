@@ -10,7 +10,6 @@ import { isAuthenticated, signout } from '../auth/helper';
 import { getCartProducts } from '../user/helper/userapicalls';
 import { withRouter } from 'react-router-dom';
 import { getCategories } from '../admin/helper/adminapicall';
-import { ConnectionStates } from 'mongoose';
 
 const Home = ({ history }) => {
   const { user, token } = isAuthenticated();
