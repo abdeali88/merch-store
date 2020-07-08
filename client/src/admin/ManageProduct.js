@@ -15,6 +15,8 @@ const ManageProduct = ({ history }) => {
     loading: true,
   });
 
+  const [reload, setReload] = useState(false);
+
   const { products, loading } = prods;
 
   const handleDelete = async (productId) => {
@@ -23,6 +25,7 @@ const ManageProduct = ({ history }) => {
 
       const res = await deleteProduct(user, token, productId);
       if (res.data) {
+        setReload(true);
         setProds({ ...prods, loading: false });
         toast.success('Product Removed!');
       } else {
@@ -35,22 +38,26 @@ const ManageProduct = ({ history }) => {
         }
       }
     } catch (err) {
+      setProds({ ...prods, loading: false });
       toast.error('Something went wrong. Please try again later!');
     }
   };
 
   useEffect(() => {
+    console.log('In');
+
     getProducts([], [], '_id', 'asc')
       .then((products) => {
         setProds({
           products: products,
           loading: false,
         });
+        setReload(false);
       })
       .catch((err) => {
         toast.error('Something went wrong. Please try again later!');
       });
-  }, [handleDelete]);
+  }, [reload, token]);
 
   return (
     <Fragment>
@@ -98,7 +105,13 @@ const ManageProduct = ({ history }) => {
                       <div className='col-md-1 col-sm-3 col-3 mb-md-0'>
                         <button
                           className=' btn btn-danger'
-                          onClick={() => handleDelete(product._id)}
+                          onClick={() =>
+                            window.confirm(
+                              'Are you sure? This cannot be undone?'
+                            )
+                              ? handleDelete(product._id)
+                              : ''
+                          }
                         >
                           <i className='fas fa-trash'></i>
                         </button>

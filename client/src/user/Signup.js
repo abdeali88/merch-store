@@ -53,8 +53,8 @@ const Signup = ({ history }) => {
       ) : (
         <Fragment>
           <div className='jumbotron bg-dark text-white text-center mb-1 pb-1'>
-            <p className='display-4'>Sign Up!</p>
-            <p className='lead'>Create your account now.</p>
+            <p className='display-4 font-sm-big'>Sign Up!</p>
+            <p className='lead font-sm-head'>Create your account now.</p>
           </div>
           <div className='row mb-5 pb-5'>
             <div className='col-md-6 col-sm-8 col-10 offset-md-3 offset-sm-2 offset-1 text-left'>

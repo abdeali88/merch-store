@@ -2,12 +2,19 @@ import axios from 'axios';
 import { api } from '../../utility/api';
 
 //products
-export const getAllProducts = async (catList, sizeList, sortBy, sortVal) => {
+export const getAllProducts = async (
+  catList,
+  sizeList,
+  gender,
+  sortBy,
+  sortVal
+) => {
   const body = JSON.stringify({
     categories: catList,
     sizes: sizeList,
     sortBy,
     sortVal,
+    gender,
   });
   const config = {
     headers: {

@@ -30,7 +30,7 @@ const EditCategory = ({ history, match }) => {
       .catch((err) => {
         toast.error('Something went wrong. Please try again later!');
       });
-  }, []);
+  }, [token]);
 
   const onChange = (e) => setFormData({ ...formData, name: e.target.value });
 

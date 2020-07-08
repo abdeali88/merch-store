@@ -23,17 +23,17 @@ router.post(
   createOrder
 );
 
-router.get('/orders/:userId', isSignedIn, isAuthenticated, getAllOrders);
+router.get(
+  '/orders/:userId',
+  isSignedIn,
+  isAuthenticated,
+  isAdmin,
+  getAllOrders
+);
 
 router.get('/order/:userId/:orderId', isSignedIn, isAuthenticated, getOrder);
 
-// router.get(
-//   '/order/status/:userId',
-//   isSignedIn,
-//   isAuthenticated,
-//   isAdmin,
-//   getOrderStatus
-// );
+router.get('/order/:userId/:orderId', isSignedIn, isAuthenticated, getOrder);
 
 router.put(
   '/order/:orderId/status/:userId',

@@ -77,7 +77,7 @@ const EditProduct = ({ history, match }) => {
       .catch((err) => {
         toast.error('Something went wrong. Please try again later!');
       });
-  }, [match.params.productId]);
+  }, [token]);
 
   const onChange = (e) => {
     if (e.target.name === 'images') {

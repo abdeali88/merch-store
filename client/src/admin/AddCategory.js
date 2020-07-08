@@ -35,7 +35,7 @@ const AddCategory = ({ history }) => {
         });
         toast.success(`Category "${res.data.category.name}" created `);
         setTimeout(() => {
-          history.push('/admin/dashboard');
+          history.push('/admin/manage/category');
         }, 2000);
       } else {
         setFormData({

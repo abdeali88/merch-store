@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('../models/User');
-const { CartProduct } = require('../models/Order');
-const Order = require('../models/Order');
-const Product = require('../models/Product');
+const { CartProduct, Order } = require('../models/Order');
 
 //gets the userId and appends user to req.profile
 exports.getUserById = async (req, res, next, userId) => {
@@ -63,13 +61,10 @@ exports.updateUser = async (req, res) => {
 
 exports.getOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.profile._id }).populate(
-      'user',
-      ['firstname', 'lastname']
-    );
-    if (!orders) {
-      return res.status(400).json({ msg: 'No orders found!' });
-    }
+    const orders = await Order.find({ user: req.profile._id }).sort({
+      createdAt: 'desc',
+    });
+
     res.json(orders);
   } catch (err) {
     if (err.kind === 'ObjectId') {

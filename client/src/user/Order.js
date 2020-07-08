@@ -15,11 +15,10 @@ const Order = ({ match, history }) => {
     getOrder(user, token, match.params.orderId)
       .then((res) => {
         if (res.data) {
-          console.log(res.data);
           setOrder(res.data);
           setLoading(false);
         } else {
-          if (res.response && res.response === 401) {
+          if (res.response && res.response.status === 401) {
             signout().then(() => {
               history.push('/signin');
             });
@@ -49,28 +48,71 @@ const Order = ({ match, history }) => {
                 </h4>
                 <ul className='list-group font-sm-body'>
                   <li className='list-group-item card-item'>
-                    <span className='badge badge-success mr-2 p-1'>
-                      Order id:
-                    </span>{' '}
-                    {order._id}
+                    <div className='row'>
+                      <div className='col-lg-2 col-md-2 col-sm-2 col-3'>
+                        <span className='badge badge-success mr-2 p-1'>
+                          Order id:
+                        </span>
+                      </div>
+                      <div className='col-md-10 col-sm-10 col-9'>
+                        {' '}
+                        {order._id}
+                      </div>
+                    </div>
                   </li>
                   <li className='list-group-item card-item'>
-                    <span className='badge badge-success mr-2 p-1'>
-                      Amount:
-                    </span>{' '}
-                    {order.amount} ₹
+                    <div className='row'>
+                      <div className='col-lg-2 col-md-2 col-sm-2 col-3'>
+                        <span className='badge badge-success mr-2 p-1'>
+                          Amount:
+                        </span>
+                      </div>
+                      <div className='col-md-10 col-sm-10 col-9'>
+                        {' '}
+                        {order.amount} ₹
+                      </div>
+                    </div>
                   </li>
                   <li className='list-group-item card-item'>
-                    <span className='badge badge-success mr-2 p-1'>
-                      Date&nbsp;&nbsp;:
-                    </span>{' '}
-                    <Moment format='DD/MM/YYYY'>{order.createdAt}</Moment>
+                    <div className='row'>
+                      <div className='col-lg-2 col-md-2 col-sm-2 col-3'>
+                        <span className='badge badge-success mr-2 p-1'>
+                          Date&nbsp;&nbsp;:
+                        </span>
+                      </div>
+                      <div className='col-md-10 col-sm-10 col-9'>
+                        {' '}
+                        <Moment format='DD/MM/YYYY'>{order.createdAt}</Moment>
+                      </div>
+                    </div>
                   </li>
                   <li className='list-group-item card-item'>
-                    <span className='badge badge-success mr-2 p-1'>
-                      Status:
-                    </span>{' '}
-                    {order.status}
+                    <div className='row'>
+                      <div className='col-lg-2 col-md-2 col-sm-2 col-3'>
+                        <span className='badge badge-success mr-2 p-1'>
+                          Address:
+                        </span>
+                      </div>
+                      <div className='col-md-10 col-sm-10 col-9'>
+                        {order.address.name}
+                        <br />
+                        {order.address.address1}
+                        <br />
+                        {order.address.address2}
+                      </div>
+                    </div>
+                  </li>
+                  <li className='list-group-item card-item'>
+                    <div className='row'>
+                      <div className='col-lg-2 col-md-2 col-sm-2 col-3'>
+                        <span className='badge badge-success mr-2 p-1'>
+                          Status:
+                        </span>
+                      </div>
+                      <div className='col-md-10 col-sm-10 col-9'>
+                        {order.status}
+                      </div>
+                    </div>
                   </li>
                   <li className='card-footer card-borders'></li>
                 </ul>

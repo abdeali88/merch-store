@@ -139,25 +139,48 @@ exports.createProduct = (req, res) => {
   });
 };
 
-//product listing for user
+//product listing for user with filters
 exports.getAllProducts = async (req, res) => {
   let catId = req.body.categories.map((cat) => cat.id);
-  let catName = req.body.categories.map((cat) => cat.name);
   let sizes = req.body.sizes.map((size) => size.size);
-  let sizeCatName = req.body.sizes.map((size) => size.category);
   let sortBy = req.body.sortBy;
   let sortVal = req.body.sortVal;
+  let gender = req.body.gender;
 
   try {
-    if (catId.length === 0 && sizes.length === 0) {
+    if (catId.length === 0 && sizes.length === 0 && gender === null) {
       const products = await Product.find()
         .select('-images')
         .populate('category', ['_id', 'name'])
         .sort([[sortBy, sortVal]]);
       return res.json(products);
-    } else if (catId.length > 0 && sizes.length === 0) {
+    } else if (catId.length === 0 && sizes.length === 0 && gender !== null) {
+      const products = await Product.find({ gender })
+        .select('-images')
+        .populate('category', ['_id', 'name'])
+        .sort([[sortBy, sortVal]]);
+      return res.json(products);
+    } else if (catId.length > 0 && sizes.length === 0 && gender === null) {
       const filteredProducts = await Product.find({
         category: { $in: catId },
+      })
+        .select('-images')
+        .populate('category', ['_id', 'name'])
+        .sort([[sortBy, sortVal]]);
+      return res.json(filteredProducts);
+    } else if (catId.length > 0 && sizes.length === 0 && gender !== null) {
+      const filteredProducts = await Product.find({
+        category: { $in: catId },
+        gender,
+      })
+        .select('-images')
+        .populate('category', ['_id', 'name'])
+        .sort([[sortBy, sortVal]]);
+      return res.json(filteredProducts);
+    } else if (catId.length > 0 && sizes.length > 0 && gender === null) {
+      const filteredProducts = await Product.find({
+        category: { $in: catId },
+        size: { $in: sizes },
       })
         .select('-images')
         .populate('category', ['_id', 'name'])
@@ -167,6 +190,7 @@ exports.getAllProducts = async (req, res) => {
       const filteredProducts = await Product.find({
         category: { $in: catId },
         size: { $in: sizes },
+        gender,
       })
         .select('-images')
         .populate('category', ['_id', 'name'])

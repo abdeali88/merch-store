@@ -151,14 +151,14 @@ export const getOrder = async (user, token, orderId) => {
   }
 };
 
-export const getAllOrders = async (user, token) => {
+export const getOrders = async (user, token) => {
   try {
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${api}/orders/${user._id}`, config);
+    const res = await axios.get(`${api}/user/orders/${user._id}`, config);
     return res;
   } catch (err) {
     console.log(err);

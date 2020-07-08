@@ -47,7 +47,7 @@ const NavPanel = () => {
           </li>
           <li className='list-group-item card-item'>
             <Link
-              to='/admin/orders'
+              to='/admin/manage/order'
               className='nav-link text-dark font-weight-bold'
             >
               <i className='fa fa-tools mr-2'></i>

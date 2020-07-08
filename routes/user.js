@@ -67,6 +67,6 @@ router.put(
   updateCart
 );
 
-router.get('/orders/user/:userId', isSignedIn, isAuthenticated, getOrders);
+router.get('/user/orders/:userId', isSignedIn, isAuthenticated, getOrders);
 
 module.exports = router;

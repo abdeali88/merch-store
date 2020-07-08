@@ -22,7 +22,6 @@ const Card = ({
     const curr_qty = Number(e.target.value);
     let new_qty;
     const operation = e.target.getAttribute('name');
-    console.log(operation);
 
     if (operation === 'plus') {
       new_qty = curr_qty + 1;

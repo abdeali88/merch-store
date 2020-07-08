@@ -131,9 +131,9 @@ const Checkout = ({ history }) => {
           },
         }
       );
+      console.log(orderResponse.data.msg);
 
-      const order_id = orderResponse.data._id;
-
+      const order_id = orderResponse.data.order._id;
       history.push(`/thankyou/${order_id}`);
 
       setCart({ ...cart, loading: false });
@@ -220,9 +220,9 @@ const Checkout = ({ history }) => {
             {' '}
             <div className='row text-white'>
               <div className='col-lg-6 offset-lg-0 col-md-6 offset-md-0 col-sm-10 offset-sm-1 col-10 offset-1'>
-                <p className='lead mb-4 font-big font-sm-head'>
+                <h1 className='lead mb-4 font-big'>
                   <i className='fas fa-shipping-fast mr-1'></i> Shipping Address
-                </p>
+                </h1>
                 <div className='form-group'>
                   <label className='text-light'>
                     <i className='fa fa-star-of-life fa-xs text-danger'></i>
@@ -376,7 +376,8 @@ const Checkout = ({ history }) => {
                           className='btn btn-block btn-info rounded'
                           onClick={displayRazorpay}
                         >
-                          Pay with Razorpay
+                          <i className='fas fa-credit-card'></i> Pay with
+                          Razorpay
                         </button>
                       </div>
                     </div>

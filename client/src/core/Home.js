@@ -29,6 +29,8 @@ const Home = ({ history }) => {
 
   const [sizeFilter, setSizeFilter] = useState([]);
 
+  const [genderFilter, setGenderFilter] = useState(null);
+
   const [sort, setSort] = useState({
     sortBy: '_id',
     sortVal: 'asc',
@@ -42,7 +44,7 @@ const Home = ({ history }) => {
 
   useEffect(() => {
     console.log('In');
-    const productsPromise = getAllProducts([], [], '_id', 'asc');
+    const productsPromise = getAllProducts([], [], null, '_id', 'asc');
 
     const categoriesPromise = getCategories();
 
@@ -113,7 +115,7 @@ const Home = ({ history }) => {
     setCatFilter(catList);
     setSizeFilter(newSizeList);
 
-    getAllProducts(catList, newSizeList, sortBy, sortVal)
+    getAllProducts(catList, newSizeList, genderFilter, sortBy, sortVal)
       .then((products) => {
         setProds({
           products: products,
@@ -132,7 +134,7 @@ const Home = ({ history }) => {
     sizeList = sizeList.filter((size) => cat.name !== size.category);
 
     setSizeFilter(sizeList);
-    getAllProducts(catList, sizeList, sortBy, sortVal)
+    getAllProducts(catList, sizeList, genderFilter, sortBy, sortVal)
       .then((products) => {
         setProds({
           products: products,
@@ -160,7 +162,7 @@ const Home = ({ history }) => {
     setCatFilter(catList);
     setSizeFilter(newSizeList);
 
-    getAllProducts(catList, newSizeList, sortBy, sortVal)
+    getAllProducts(catList, newSizeList, genderFilter, sortBy, sortVal)
       .then((products) => {
         setProds({
           products: products,
@@ -187,10 +189,20 @@ const Home = ({ history }) => {
       });
     }
 
+    const sizeName = sizeList.map((size) => size.category);
+    catList.forEach((cat) => {
+      if (!sizeName.includes(cat.name)) {
+        allProducts.forEach((prod) => {
+          if (prod.category.name === cat.name)
+            newSizeList.push({ category: cat.name, size: prod.size });
+        });
+      }
+    });
+
     setCatFilter(catList);
     setSizeFilter(newSizeList);
 
-    getAllProducts(catList, newSizeList, sortBy, sortVal)
+    getAllProducts(catList, newSizeList, genderFilter, sortBy, sortVal)
       .then((products) => {
         setProds({
           products: products,
@@ -209,7 +221,23 @@ const Home = ({ history }) => {
       sortVal: val,
     });
 
-    getAllProducts(catFilter, sizeFilter, 'price', val)
+    getAllProducts(catFilter, sizeFilter, genderFilter, 'price', val)
+      .then((products) => {
+        setProds({
+          products: products,
+          loading: false,
+        });
+      })
+      .catch((err) => {
+        toast.error('Something went wrong. Please try again later!');
+      });
+  }
+
+  //Gender Filter
+  function selectGender(gender) {
+    setGenderFilter(gender);
+
+    getAllProducts(catFilter, sizeFilter, gender, sortBy, sortVal)
       .then((products) => {
         setProds({
           products: products,
@@ -266,14 +294,29 @@ const Home = ({ history }) => {
     chips: {
       background: '#5cb85c',
     },
-    searchBox: {
-      backgroundColor: '#f7f7f7',
-    },
     multiselectContainer: {
       backgroundColor: '#f7f7f7',
       border: 'none',
       borderBottom: '2px solid #18a2b8',
+      fontFamily: 'Arial, FontAwesome',
+      fontStyle: 'normal',
+      fontWeight: 'normal',
+      textDecoration: 'inherit',
+      borderRadius: '5px',
     },
+  };
+
+  const selectStyle = {
+    control: (styles) => ({
+      ...styles,
+      fontFamily: 'Arial, FontAwesome',
+      fontStyle: 'normal',
+      fontWeight: 'normal',
+      textDecoration: 'inherit',
+      backgroundColor: '#f7f7f7',
+      border: 'none',
+      borderBottom: '2px solid #18a2b8',
+    }),
   };
 
   return (
@@ -284,8 +327,8 @@ const Home = ({ history }) => {
       ) : (
         <Fragment>
           <div className='container mt-4 mb-5'>
-            <div className='row mb-5'>
-              <div className='col-lg-4 col-md-4 offset-lg-0 offset-md-0 col-sm-8 offset-sm-2 offset-1 col-10 mb-md-0 mb-2'>
+            <div className='row mb-4'>
+              <div className='  col-lg-4 col-md-6 offset-lg-2 offset-md-0 col-sm-8 offset-sm-2 offset-1 col-10 mb-md-0 mb-sm-4 mb-4'>
                 <Multiselect
                   options={categories} // Options to display in the dropdown
                   onSelect={(catList, cat) =>
@@ -295,16 +338,15 @@ const Home = ({ history }) => {
                     catRemove(catList, cat, sizeFilter)
                   }
                   displayValue='name'
-                  // selectedValues={catFilter}
                   showCheckbox={true}
                   id='category'
-                  placeholder='Category'
+                  placeholder='&#xf553; Category'
                   avoidHighlightFirstOption={true}
                   style={filterStyle}
                 />
               </div>
 
-              <div className='col-lg-4 col-md-4 offset-lg-0 offset-md-0 col-sm-8 offset-sm-2 offset-1 col-10 mb-md-0 mb-2'>
+              <div className='col-lg-4 col-md-6 offset-lg-0 offset-md-0 col-sm-8 offset-sm-2 offset-1 col-10'>
                 <Multiselect
                   options={catSizes}
                   onSelect={(sizeList) => sizeSelect(catFilter, sizeList)}
@@ -314,28 +356,43 @@ const Home = ({ history }) => {
                   groupBy='category'
                   id='size'
                   displayValue='size'
-                  // selectedValues={sizeFilter}
                   showCheckbox={true}
-                  placeholder='Size'
+                  placeholder='&#xf422; Size'
                   avoidHighlightFirstOption={true}
                   style={filterStyle}
                   disable={catFilter.length === 0 ? true : false}
                 />
               </div>
+            </div>
 
-              <div className='col-lg-4 col-md-4 offset-lg-0 offset-md-0 offset-1 col-sm-8 offset-sm-2 col-10 text-dark'>
+            <div className='row mb-5'>
+              <div className='col-lg-4 col-md-6 offset-lg-2 offset-md-0 offset-1 col-sm-8 offset-sm-2 col-10  mb-md-0 mb-sm-4 mb-4 text-dark'>
+                <Select
+                  name='gender'
+                  styles={selectStyle}
+                  onChange={(option) => selectGender(option.value)}
+                  options={[
+                    { value: 'Male', label: 'Male' },
+                    { value: 'Female', label: 'Female' },
+                  ]}
+                  placeholder='&#xF228;  Gender....'
+                />
+              </div>
+
+              <div className='col-lg-4 col-md-6 offset-lg-0 offset-md-0 offset-1 col-sm-8 offset-sm-2 col-10 text-dark'>
                 <Select
                   name='sort'
+                  styles={selectStyle}
                   onChange={(option) => sortFilter(option.value)}
                   options={[
                     { value: 'asc', label: 'Price: Low to High' },
                     { value: 'desc', label: 'Price: High to Low' },
                   ]}
-                  placeholder='Sort....'
+                  placeholder='&#xf884;  Sort....'
                 />
               </div>
             </div>
-            <div className='row text-center'>{cardList}</div>
+            <div className='row text-center mt-5'>{cardList}</div>
           </div>
         </Fragment>
       )}

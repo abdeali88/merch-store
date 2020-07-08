@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from 'react';
-import { getAllOrders } from './helper/userapicalls';
+import { getOrders } from './helper/userapicalls';
 import { isAuthenticated, signout } from '../auth/helper/index';
 import { withRouter, Link } from 'react-router-dom';
 import Spinner from '../core/Spinner';
@@ -14,7 +14,7 @@ const UserDashBoard = ({ history }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAllOrders(user, token)
+    getOrders(user, token)
       .then((res) => {
         if (res.data) {
           setOrders(res.data);
@@ -146,11 +146,27 @@ const UserDashBoard = ({ history }) => {
                   ) : (
                     <ul className='list-group'>
                       <li className='list-group-item card-item py-3'>
-                        <div className='row'>No orders yet!</div>
                         <div className='row'>
-                          <Link className='btn btn-warning' to='/'>
-                            Order Now !
-                          </Link>
+                          <div className='col-12'>
+                            <h6 className='font-sm-body'>No orders yet!</h6>
+                          </div>
+                        </div>
+                        <div className='row mt-2'>
+                          <div className='col-12 hide-small'>
+                            {' '}
+                            <Link className='btn btn-secondary rounded ' to='/'>
+                              Order Now !
+                            </Link>
+                          </div>
+                          <div className='col-12 hide-lg'>
+                            {' '}
+                            <Link
+                              className='btn btn-secondary rounded btn-sm '
+                              to='/'
+                            >
+                              Order Now !
+                            </Link>
+                          </div>
                         </div>
                       </li>
                     </ul>

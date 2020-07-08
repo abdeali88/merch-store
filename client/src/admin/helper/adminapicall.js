@@ -167,3 +167,41 @@ export const updateProduct = async (user, token, productId, formData) => {
     return err;
   }
 };
+
+export const getAllOrders = async (user, token) => {
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'mutipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const res = await axios.get(`${api}/orders/${user._id}`, config);
+    return res;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const updateOrderStatus = async (user, token, orderId, status) => {
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const body = JSON.stringify(status);
+
+    const res = await axios.put(
+      `${api}/order/${orderId}/status/${user._id}`,
+      body,
+      config
+    );
+    return res;
+  } catch (err) {
+    return err;
+  }
+};

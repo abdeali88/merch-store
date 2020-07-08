@@ -1,9 +1,7 @@
 const { validationResult } = require('express-validator');
-const mongoose = require('mongoose');
 const User = require('../models/User');
 const config = require('config');
 const jwt = require('jsonwebtoken');
-// const expressJwt = require('express-jwt');
 
 exports.signup = async (req, res) => {
   const errors = validationResult(req);
@@ -133,7 +131,10 @@ exports.isSignedIn = (req, res, next) => {
 
 //custom middlewares
 exports.isAuthenticated = (err, req, res, next) => {
-  let checker = req.profile && req.auth && req.profile._id == req.auth._id;
+  let checker =
+    req.profile &&
+    req.auth &&
+    req.profile._id.toString() === req.auth._id.toString();
 
   if (!checker) {
     return res.status(401).json({ msg: 'Access Denied!' });
@@ -147,30 +148,3 @@ exports.isAdmin = (req, res, next) => {
   }
   next();
 };
-
-// const sgMail = require('@sendgrid/mail');
-// sgMail.setApiKey(config.get('mailKey'));
-//   const msg = {
-//     to: email,
-//     from: config.get('from'),
-//     subject: 'Email Verification Link',
-//     html: `<h2>Please click the below link to verify your account </h2>
-//            <p>${config.get('clientURL')}/users/activate/${token}</p>
-//            <hr/>
-//            `,
-//   };
-
-//   sgMail.send(msg).then(
-//     () => {
-//       return res
-//         .status(200)
-//         .json({ msg: `Email has been sent to ${email}` });
-//     },
-//     (error) => {
-//       console.error(error);
-
-//       if (error.response) {
-//         return res.status(200).json({ msg: error.response.body });
-//       }
-//     }
-//   );

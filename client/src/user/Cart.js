@@ -64,7 +64,10 @@ const Cart = ({ history }) => {
   }
 
   function checkStock() {
-    setTotalLoad(true);
+    setCartItems({
+      ...cartItems,
+      loading: true,
+    });
     checkInStock(user, token)
       .then((res) => {
         if (res.data) {

@@ -7,7 +7,6 @@ const razorpay = new Razorpay({
   key_id: config.get('razorpayTestId'),
   key_secret: config.get('razorpayTestSecret'),
 });
-const { Order } = require('../models/Order');
 
 router.post(
   '/payment/razorpay',
@@ -52,7 +51,6 @@ router.post('/payment/verification', (req, res) => {
     .digest('hex');
 
   if (generated_signature === razorpay_signature) {
-    console.log(req.body);
     return res.status(200).json({ msg: 'Payment Success.' });
   } else {
     return res.status(422).json({ error: 'Payment Failed.' });

@@ -15,6 +15,8 @@ const ManageCategory = ({ history }) => {
     loading: true,
   });
 
+  const [reload, setReload] = useState(false);
+
   const { categories, loading } = cats;
 
   const handleDelete = async (categoryId) => {
@@ -23,6 +25,7 @@ const ManageCategory = ({ history }) => {
 
       const res = await deleteCategory(user, token, categoryId);
       if (res.data) {
+        setReload(true);
         setCats({ ...cats, loading: false });
         toast.success('Category Removed!');
       } else {
@@ -31,26 +34,30 @@ const ManageCategory = ({ history }) => {
           history.push('/signin');
         }
         if (res.response) {
+          setCats({ ...cats, loading: false });
           toast.error('Something went wrong. Please try again later!');
         }
       }
     } catch (err) {
+      setCats({ ...cats, loading: false });
       toast.error('Something went wrong. Please try again later!');
     }
   };
 
   useEffect(() => {
+    console.log('In');
     getCategories()
       .then((categories) => {
         setCats({
           categories: categories,
           loading: false,
         });
+        setReload(false);
       })
       .catch((err) => {
         toast.error('Something went wrong. Please try again later!');
       });
-  }, [handleDelete]);
+  }, [token, reload]);
 
   return (
     <Fragment>
@@ -90,7 +97,13 @@ const ManageCategory = ({ history }) => {
                       <div className='col-1'>
                         <button
                           className=' btn btn-danger'
-                          onClick={() => handleDelete(category._id)}
+                          onClick={() =>
+                            window.confirm(
+                              'Are you sure? This cannot be undone?'
+                            )
+                              ? handleDelete(category._id)
+                              : ''
+                          }
                         >
                           <i className='fas fa-trash'></i>
                         </button>

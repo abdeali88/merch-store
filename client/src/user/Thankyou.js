@@ -3,7 +3,7 @@ import { getOrder } from './helper/userapicalls';
 import { isAuthenticated, signout } from '../auth/helper';
 import { withRouter } from 'react-router-dom';
 import Spinner from '../core/Spinner';
-import CartImage from './CartImage';
+import Moment from 'react-moment';
 
 const Thankyou = ({ match, history }) => {
   const { user, token } = isAuthenticated();
@@ -15,11 +15,10 @@ const Thankyou = ({ match, history }) => {
     getOrder(user, token, match.params.orderId)
       .then((res) => {
         if (res.data) {
-          console.log(res.data);
           setOrder(res.data);
           setLoading(false);
         } else {
-          if (res.response && res.response === 401) {
+          if (res.response && res.response.status === 401) {
             signout().then(() => {
               history.push('/signin');
             });
@@ -56,16 +55,84 @@ const Thankyou = ({ match, history }) => {
               </p>
             </div>
           </div>
-          <div className='row text-white mt-5 '>
-            <div className='col-12'>
-              <h5 className='font-sm-head font-weight-light'>
-                Order id : <span className=' ml-1'>#{order._id}</span>
-              </h5>
-            </div>
-            <div className='col-12'>
-              <h5 className='font-sm-head font-weight-light'>
-                Amount : <span className=' ml-1'>{order.amount} ₹</span>
-              </h5>
+          <div className='row mt-5'>
+            <div className='col-lg-8 col-md-10 col-12'>
+              <div className='card mb-4 '>
+                <h4 className='card-header card-borders font-sm-head'>
+                  <i className='fa fa-box-open fa-sm mr-1 '></i> Order
+                  Information
+                </h4>
+                <ul className='list-group font-sm-body'>
+                  <li className='list-group-item card-item'>
+                    <div className='row'>
+                      <div className='col-lg-2 col-md-2 col-sm-2 col-3'>
+                        <span className='badge badge-success mr-2 p-1'>
+                          Order id:
+                        </span>
+                      </div>
+                      <div className='col-md-10 col-sm-10 col-9'>
+                        {' '}
+                        {order._id}
+                      </div>
+                    </div>
+                  </li>
+                  <li className='list-group-item card-item'>
+                    <div className='row'>
+                      <div className='col-lg-2 col-md-2 col-sm-2 col-3'>
+                        <span className='badge badge-success mr-2 p-1'>
+                          Amount:
+                        </span>
+                      </div>
+                      <div className='col-md-10 col-sm-10 col-9'>
+                        {' '}
+                        {order.amount} ₹
+                      </div>
+                    </div>
+                  </li>
+                  <li className='list-group-item card-item'>
+                    <div className='row'>
+                      <div className='col-lg-2 col-md-2 col-sm-2 col-3'>
+                        <span className='badge badge-success mr-2 p-1'>
+                          Date&nbsp;&nbsp;:
+                        </span>
+                      </div>
+                      <div className='col-md-10 col-sm-10 col-9'>
+                        {' '}
+                        <Moment format='DD/MM/YYYY'>{order.createdAt}</Moment>
+                      </div>
+                    </div>
+                  </li>
+                  <li className='list-group-item card-item'>
+                    <div className='row'>
+                      <div className='col-lg-2 col-md-2 col-sm-2 col-3'>
+                        <span className='badge badge-success mr-2 p-1'>
+                          Address:
+                        </span>
+                      </div>
+                      <div className='col-md-10 col-sm-10 col-9'>
+                        {order.address.name}
+                        <br />
+                        {order.address.address1}
+                        <br />
+                        {order.address.address2}
+                      </div>
+                    </div>
+                  </li>
+                  <li className='list-group-item card-item'>
+                    <div className='row'>
+                      <div className='col-lg-2 col-md-2 col-sm-2 col-3'>
+                        <span className='badge badge-success mr-2 p-1'>
+                          Status:
+                        </span>
+                      </div>
+                      <div className='col-md-10 col-sm-10 col-9'>
+                        {order.status}
+                      </div>
+                    </div>
+                  </li>
+                  <li className='card-footer card-borders'></li>
+                </ul>
+              </div>
             </div>
           </div>
           <div className='row mt-3'>

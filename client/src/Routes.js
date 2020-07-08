@@ -21,6 +21,7 @@ import Checkout from './user/Checkout';
 import Thankyou from './user/Thankyou';
 import PageNotFound from './core/PageNotFound';
 import Order from './user/Order';
+import ManageOrder from './admin/ManageOrder';
 
 function Routes() {
   return (
@@ -82,6 +83,11 @@ function Routes() {
               path='/admin/update/category/:categoryId'
               exact
               component={EditCategory}
+            />
+            <AdminRoute
+              path='/admin/manage/order'
+              exact
+              component={ManageOrder}
             />
             <Route component={PageNotFound} />
           </Switch>
