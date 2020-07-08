@@ -46,7 +46,7 @@ const ManageProduct = ({ history }) => {
   useEffect(() => {
     console.log('In');
 
-    getProducts([], [], '_id', 'asc')
+    getProducts([], [], null, '_id', 'asc')
       .then((products) => {
         setProds({
           products: products,

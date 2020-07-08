@@ -14,12 +14,12 @@ export const signup = async (formData) => {
     const res = await axios.post(`${api}/signup`, body, config);
     setUser(res.data);
     toast.success('Registered Successfully');
-    return true;
+    return res;
   } catch (err) {
     if (err.response) {
       toast.error(err.response.data.msg);
     }
-    return false;
+    return err;
   }
 };
 
@@ -33,12 +33,12 @@ export const signin = async (formData) => {
     const body = JSON.stringify(formData);
     const res = await axios.post(`${api}/signin`, body, config);
     setUser(res.data);
-    return true;
+    return res;
   } catch (err) {
     if (err.response) {
       toast.error(err.response.data.msg);
     }
-    return false;
+    return err;
   }
 };
 

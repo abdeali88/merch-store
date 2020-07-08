@@ -101,12 +101,19 @@ export const addProduct = async (user, token, formData) => {
   }
 };
 
-export const getProducts = async (catList, sizeList, sortBy, sortVal) => {
+export const getProducts = async (
+  catList,
+  sizeList,
+  gender,
+  sortBy,
+  sortVal
+) => {
   const body = JSON.stringify({
     categories: catList,
     sizes: sizeList,
     sortBy,
     sortVal,
+    gender,
   });
   const config = {
     headers: {

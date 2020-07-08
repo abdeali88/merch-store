@@ -500,9 +500,12 @@ img.spin:empty {
 
 /****************** User dashboard *************/
 
-/* .icons {
-  font-family: Arial, FontAwesome;
-  font-style: normal;
-  font-weight: normal;
-  text-decoration: inherit;
-} */
+.btn-google {
+  color: white;
+  background: #d9534f;
+}
+
+.btn-facebook {
+  color: white;
+  background: #3b5998;
+}

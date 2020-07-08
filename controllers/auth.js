@@ -2,6 +2,8 @@ const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const config = require('config');
 const jwt = require('jsonwebtoken');
+const fetch = require('node-fetch');
+const { OAuth2Client } = require('google-auth-library');
 
 exports.signup = async (req, res) => {
   const errors = validationResult(req);
@@ -25,7 +27,7 @@ exports.signup = async (req, res) => {
     };
 
     const token = jwt.sign(payload, config.get('jwtSecret'), {
-      expiresIn: '20hr',
+      expiresIn: '7d',
     });
 
     if (!token) {
@@ -33,8 +35,6 @@ exports.signup = async (req, res) => {
         .status(500)
         .json({ msg: 'Issue with server. Please try again later!' });
     }
-
-    res.cookie('token', token, { expires: new Date(Date.now() + 72000) });
 
     res.json({
       token: token,
@@ -75,7 +75,7 @@ exports.signin = async (req, res) => {
     };
 
     const token = jwt.sign(payload, config.get('jwtSecret'), {
-      expiresIn: '20hr',
+      expiresIn: '7d',
     });
 
     if (!token) {
@@ -83,8 +83,6 @@ exports.signin = async (req, res) => {
         .status(500)
         .json({ msg: 'Issue with server. Please try again later!' });
     }
-
-    res.cookie('token', token, { expires: new Date(Date.now() + 72000) });
 
     const { _id, firstname, lastname, role } = user;
 
@@ -98,10 +96,145 @@ exports.signin = async (req, res) => {
 };
 
 exports.signout = (req, res) => {
-  res.clearCookie('token');
   res.json({
     msg: 'User signout successful',
   });
+};
+
+//google authentication
+const googleAuth = new OAuth2Client(config.get('googleClientId'));
+// Google Login
+exports.googleSignin = (req, res) => {
+  const { idToken } = req.body;
+
+  googleAuth
+    .verifyIdToken({ idToken, audience: config.get('googleClientId') })
+    .then((response) => {
+      // console.log('GOOGLE LOGIN RESPONSE',response)
+      const { email_verified, name, email } = response.payload;
+      if (email_verified) {
+        User.findOne({ email }).exec((err, user) => {
+          if (user) {
+            const token = jwt.sign({ _id: user._id }, config.get('jwtSecret'), {
+              expiresIn: '7d',
+            });
+            const { _id, email, firstname, lastname, role } = user;
+            return res.json({
+              token,
+              user: { _id, email, firstname, lastname, role },
+            });
+          } else {
+            let password = email + config.get('jwtSecret');
+            let nameList = name.split(' ');
+            let firstname, lastname;
+            if (nameList.length === 1) {
+              firstname = nameList[0];
+              lastname = '';
+            } else if (nameList.length === 2) {
+              firstname = nameList[0];
+              lastname = nameList[1];
+            } else if (nameList.length === 3) {
+              firstname = nameList[0];
+              lastname = nameList[2];
+            } else {
+              firstname = nameList[0];
+              lastname = nameList[-1];
+            }
+            user = new User({ firstname, lastname, email, password });
+            user.save((err, data) => {
+              if (err) {
+                console.log('ERROR GOOGLE LOGIN ON USER SAVE', err);
+                return res.status(400).json({
+                  msg: 'Google Signin Failed!',
+                });
+              }
+              const token = jwt.sign(
+                { _id: data._id },
+                config.get('jwtSecret'),
+                { expiresIn: '7d' }
+              );
+              const { _id, email, firstname, lastname, role } = data;
+              return res.json({
+                token,
+                user: { _id, email, firstname, lastname, role },
+              });
+            });
+          }
+        });
+      } else {
+        return res.status(400).json({
+          msg: 'Google Signin failed! Please try again',
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+
+//facebook authentication
+exports.facebookSignin = (req, res) => {
+  const { userID, accessToken } = req.body;
+
+  const url = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email&access_token=${accessToken}`;
+
+  return fetch(url, {
+    method: 'GET',
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      const { email, name } = response;
+      User.findOne({ email }).exec((err, user) => {
+        if (user) {
+          const token = jwt.sign({ _id: user._id }, config.get('jwtSecret'), {
+            expiresIn: '7d',
+          });
+          const { _id, email, name, role } = user;
+          return res.json({
+            token,
+            user: { _id, email, name, role },
+          });
+        } else {
+          let password = email + config.get('jwtSecret');
+          let nameList = name.split(' ');
+          let firstname, lastname;
+          if (nameList.length === 1) {
+            firstname = nameList[0];
+            lastname = '';
+          } else if (nameList.length === 2) {
+            firstname = nameList[0];
+            lastname = nameList[1];
+          } else if (nameList.length === 3) {
+            firstname = nameList[0];
+            lastname = nameList[2];
+          } else {
+            firstname = nameList[0];
+            lastname = nameList[-1];
+          }
+          user = new User({ firstname, lastname, email, password });
+          user.save((err, data) => {
+            if (err) {
+              return res.status(400).json({
+                msg: 'Facebook Signin Failed!',
+              });
+            }
+            const token = jwt.sign({ _id: data._id }, config.get('jwtSecret'), {
+              expiresIn: '7d',
+            });
+            const { _id, email, firstname, lastname, role } = data;
+            return res.json({
+              token,
+              user: { _id, email, firstname, lastname, role },
+            });
+          });
+        }
+      });
+    })
+    .catch((error) => {
+      res.json({
+        msg: 'Facebook Signin failed. Try again!',
+      });
+    });
 };
 
 //protected routes (check if user is signedIn, has valid token)
