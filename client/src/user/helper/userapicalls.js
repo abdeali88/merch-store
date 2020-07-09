@@ -10,7 +10,7 @@ export const addToCart = async (productId, user, token) => {
       },
     };
     const res = await axios.put(
-      `${api}/user/add/cart/${user._id}/${productId}`,
+      `/api/user/add/cart/${user._id}/${productId}`,
       null,
       config
     );
@@ -29,7 +29,7 @@ export const removeFromCart = async (productId, user, token) => {
       },
     };
     const res = await axios.put(
-      `${api}/user/remove/cart/${user._id}/${productId}`,
+      `/api/user/remove/cart/${user._id}/${productId}`,
       null,
       config
     );
@@ -51,7 +51,7 @@ export const updateCart = async (productId, qty, user, token) => {
     const body = JSON.stringify(qty);
 
     const res = await axios.put(
-      `${api}/user/update/cart/${user._id}/${productId}`,
+      `/api/user/update/cart/${user._id}/${productId}`,
       body,
       config
     );
@@ -77,10 +77,7 @@ export const getCartProducts = async (user, token) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(
-      `${api}/user/cart/products/${user._id}`,
-      config
-    );
+    const res = await axios.get(`/api/user/cart/products/${user._id}`, config);
     return res;
   } catch (err) {
     console.log(err);
@@ -95,7 +92,7 @@ export const getCart = async (user, token) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${api}/user/cart/${user._id}`, config);
+    const res = await axios.get(`/api/user/cart/${user._id}`, config);
     return res;
   } catch (err) {
     console.log(err);
@@ -111,7 +108,7 @@ export const checkInStock = async (user, token) => {
       },
     };
     const res = await axios.get(
-      `${api}/user/check/cart/stock/${user._id}`,
+      `/api/user/check/cart/stock/${user._id}`,
       config
     );
     return res;
@@ -128,7 +125,7 @@ export const getCartWithTotal = async (user, token) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${api}/user/cart/total/${user._id}`, config);
+    const res = await axios.get(`/api/user/cart/total/${user._id}`, config);
     return res;
   } catch (err) {
     console.log(err);
@@ -143,7 +140,7 @@ export const getOrder = async (user, token, orderId) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${api}/order/${user._id}/${orderId}`, config);
+    const res = await axios.get(`/api/order/${user._id}/${orderId}`, config);
     return res;
   } catch (err) {
     console.log(err);
@@ -158,7 +155,7 @@ export const getOrders = async (user, token) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${api}/user/orders/${user._id}`, config);
+    const res = await axios.get(`/api/user/orders/${user._id}`, config);
     return res;
   } catch (err) {
     console.log(err);

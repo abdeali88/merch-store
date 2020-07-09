@@ -12,7 +12,7 @@ export const addCategory = async (user, token, formData) => {
     };
     const body = JSON.stringify(formData);
     const res = await axios.post(
-      `${api}/category/create/${user._id}`,
+      `/api/category/create/${user._id}`,
       body,
       config
     );
@@ -24,7 +24,7 @@ export const addCategory = async (user, token, formData) => {
 
 export const getCategories = async () => {
   try {
-    const res = await axios.get(`${api}/categories`);
+    const res = await axios.get(`/api/categories`);
     return res.data;
   } catch (err) {
     console.log(err);
@@ -40,7 +40,7 @@ export const deleteCategory = async (user, token, categoryId) => {
       },
     };
     const res = await axios.delete(
-      `${api}/category/${categoryId}/${user._id}`,
+      `/api/category/${categoryId}/${user._id}`,
       config
     );
     return res;
@@ -51,7 +51,7 @@ export const deleteCategory = async (user, token, categoryId) => {
 
 export const getCategory = async (categoryId) => {
   try {
-    const res = await axios.get(`${api}/category/${categoryId}`);
+    const res = await axios.get(`/api/category/${categoryId}`);
     return res.data;
   } catch (err) {
     console.log(err);
@@ -70,7 +70,7 @@ export const updateCategory = async (user, token, categoryId, formData) => {
     const body = JSON.stringify(formData);
 
     const res = await axios.put(
-      `${api}/category/${categoryId}/${user._id}`,
+      `/api/category/${categoryId}/${user._id}`,
       body,
       config
     );
@@ -91,7 +91,7 @@ export const addProduct = async (user, token, formData) => {
     };
 
     const res = await axios.post(
-      `${api}/product/create/${user._id}`,
+      `/api/product/create/${user._id}`,
       formData,
       config
     );
@@ -121,7 +121,7 @@ export const getProducts = async (
     },
   };
   try {
-    const res = await axios.post(`${api}/products`, body, config);
+    const res = await axios.post(`/api/products`, body, config);
     return res.data;
   } catch (err) {
     console.log(err);
@@ -137,7 +137,7 @@ export const deleteProduct = async (user, token, productId) => {
       },
     };
     const res = await axios.delete(
-      `${api}/product/${productId}/${user._id}`,
+      `/api/product/${productId}/${user._id}`,
       config
     );
     return res;
@@ -148,7 +148,7 @@ export const deleteProduct = async (user, token, productId) => {
 
 export const getProduct = async (productId) => {
   try {
-    const res = await axios.get(`${api}/product/${productId}`);
+    const res = await axios.get(`/api/product/${productId}`);
     return res.data;
   } catch (err) {
     console.log(err);
@@ -165,7 +165,7 @@ export const updateProduct = async (user, token, productId, formData) => {
     };
 
     const res = await axios.put(
-      `${api}/product/${productId}/${user._id}`,
+      `/api/product/${productId}/${user._id}`,
       formData,
       config
     );
@@ -184,7 +184,7 @@ export const getAllOrders = async (user, token) => {
       },
     };
 
-    const res = await axios.get(`${api}/orders/${user._id}`, config);
+    const res = await axios.get(`/api/orders/${user._id}`, config);
     return res;
   } catch (err) {
     return err;
@@ -203,7 +203,7 @@ export const updateOrderStatus = async (user, token, orderId, status) => {
     const body = JSON.stringify(status);
 
     const res = await axios.put(
-      `${api}/order/${orderId}/status/${user._id}`,
+      `/api/order/${orderId}/status/${user._id}`,
       body,
       config
     );

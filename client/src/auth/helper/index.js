@@ -11,7 +11,7 @@ export const signup = async (formData) => {
       },
     };
     const body = JSON.stringify(formData);
-    const res = await axios.post(`${api}/signup`, body, config);
+    const res = await axios.post(`/api/signup`, body, config);
     setUser(res.data);
     toast.success('Registered Successfully');
     return res;
@@ -31,7 +31,7 @@ export const signin = async (formData) => {
       },
     };
     const body = JSON.stringify(formData);
-    const res = await axios.post(`${api}/signin`, body, config);
+    const res = await axios.post(`/api/signin`, body, config);
     setUser(res.data);
     return res;
   } catch (err) {
@@ -52,7 +52,7 @@ export const signout = async () => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('jwt');
     try {
-      await axios.get(`${api}/signout`);
+      await axios.get(`/api/signout`);
     } catch (err) {
       console.log(err);
     }

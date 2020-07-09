@@ -106,14 +106,14 @@ const Checkout = ({ history }) => {
     setCart({ ...cart, loading: true });
 
     try {
-      await axios.post(`${api}/payment/verification`, {
+      await axios.post(`/api/payment/verification`, {
         razorpay_payment_id,
         razorpay_order_id,
         razorpay_signature,
       });
 
       const orderResponse = await axios.post(
-        `${api}/order/create/${user._id}`,
+        `/api/order/create/${user._id}`,
         {
           order: {
             products: items,
@@ -166,7 +166,7 @@ const Checkout = ({ history }) => {
       };
       try {
         const res = await axios.post(
-          `${api}/payment/razorpay`,
+          `/api/payment/razorpay`,
           {
             amount: total,
           },

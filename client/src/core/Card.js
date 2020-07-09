@@ -4,7 +4,6 @@ import { addToCart, removeFromCart } from '../user/helper/userapicalls';
 import { isAuthenticated, signout } from '../auth/helper';
 import { toast } from 'react-toastify';
 import { withRouter } from 'react-router-dom';
-import spinner3 from './spinner3.gif';
 
 const Card = ({
   product,
@@ -105,7 +104,7 @@ const Card = ({
             <div className='col-md-6 col-sm-6 col-6'>
               {loading ? (
                 <img
-                  src={spinner3}
+                  src='/spinner3.gif'
                   alt='Loading spinner'
                   style={{ width: '45px', height: '45px' }}
                 />

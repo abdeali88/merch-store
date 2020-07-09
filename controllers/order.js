@@ -1,5 +1,5 @@
 const { Order } = require('../models/Order');
-const config = require('../config/default.json');
+const config = require('config');
 
 exports.getOrderById = async (req, res, next, id) => {
   try {
@@ -40,10 +40,10 @@ exports.createOrder = async (req, res) => {
     order = await order.save();
 
     const sgMail = require('@sendgrid/mail');
-    sgMail.setApiKey(config.mailKey);
+    sgMail.setApiKey(config.get('mailKey'));
     const msg = {
       to: req.profile.email,
-      from: config.from,
+      from: config.get('from'),
       subject: 'Fashion Hub Order Confirmation',
       html: `<!doctype html>
       <html>
@@ -158,7 +158,9 @@ exports.createOrder = async (req, res) => {
                         <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
                           <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
-                              <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hello ${req.profile.firstname}</p>
+                              <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hello ${
+                                req.profile.firstname
+                              }</p>
                               <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Your order at Fashion Hub has been confirmed. Just sit back and relax!</p>
                               <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box;">
                                 <tbody>
@@ -167,7 +169,9 @@ exports.createOrder = async (req, res) => {
                                       <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
                                         <tbody>
                                           <tr>
-                                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;"> <a href="${config.clientURL}/user/dashboard" target="_blank" style="display: inline-block; color: #ffffff; background-color: #3498db; border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: #3498db;">Check Order Details</a> </td>
+                                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;"> <a href="${config.get(
+                                              'clientURL'
+                                            )}/user/dashboard" target="_blank" style="display: inline-block; color: #ffffff; background-color: #3498db; border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: #3498db;">Check Order Details</a> </td>
                                           </tr>
                                         </tbody>
                                       </table>
@@ -175,9 +179,15 @@ exports.createOrder = async (req, res) => {
                                   </tr>
                                 </tbody>
                               </table>
-                              <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Your order id is <b>${order._id}</b></p>
-                              <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Your payment id is <b>${order.payment.razorpay_payment_id} </b>.</p>
-                              <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Order amount is <b> ${order.amount} ₹<b>.</p>
+                              <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Your order id is <b>${
+                                order._id
+                              }</b></p>
+                              <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Your payment id is <b>${
+                                order.payment.razorpay_payment_id
+                              } </b>.</p>
+                              <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Order amount is <b> ${
+                                order.amount
+                              } ₹<b>.</p>
                             </td>
                           </tr>
                         </table>

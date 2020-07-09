@@ -194,29 +194,6 @@ const Card = ({
                   </div>
                 </div>
               </div>
-
-              {/* <div className='col-lg-3 col-md-3 col-sm-3 col-2 mt-2 font-sm-body'>
-          
-                <div className='row pt-lg-5 mt-lg-5 pt-md-5 mt-md-5 pt-sm-3 mt-sm-3 pt-3 mt-3'>
-                  {loading ? (
-                    <div className='col-12 text-left'>
-                      <img
-                        src={spinner3}
-                        style={{ width: '40px', height: '40px' }}
-                      />
-                    </div>
-                  ) : (
-                    <div className='col-12 text-left'>
-                      <span className='hide-sm'>
-                        <i className='fas fa-tag mr-1'></i>
-                      </span>{' '}
-                      <span className='lead font-sm-head'>
-                        {item.product.price * item.qty} ₹
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

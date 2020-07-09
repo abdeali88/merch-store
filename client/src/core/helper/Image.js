@@ -3,8 +3,6 @@ import { api } from '../../utility/api';
 import axios from 'axios';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
-// import Spinner from '../Spinner';
-import spinner2 from '../spinner2.gif';
 
 const Image = ({ product }) => {
   const [imgs, setImgs] = useState({
@@ -16,7 +14,7 @@ const Image = ({ product }) => {
 
   useEffect(() => {
     axios
-      .get(`${api}/product/images/${product._id}`)
+      .get(`/api/product/images/${product._id}`)
       .then((res) => {
         setImgs({
           images: res.data,
@@ -31,7 +29,7 @@ const Image = ({ product }) => {
   return loading ? (
     <div className='rounded border border-secondary p-2'>
       <img
-        src={spinner2}
+        src='/spinner2.gif'
         alt='Spinner'
         style={{ maxHeight: '80%', maxWidth: '80%' }}
         className='mb-3 rounded'

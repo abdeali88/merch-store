@@ -44,7 +44,7 @@ const Signin = ({ history }) => {
 
   const sendGoogleToken = (tokenId) => {
     axios
-      .post(`${api}/signin/google`, {
+      .post(`/api/signin/google`, {
         idToken: tokenId,
       })
       .then((res) => {
@@ -69,7 +69,7 @@ const Signin = ({ history }) => {
 
   const sendFacebookToken = (userID, accessToken) => {
     axios
-      .post(`${api}/signin/facebook`, {
+      .post(`/api/signin/facebook`, {
         userID,
         accessToken,
       })

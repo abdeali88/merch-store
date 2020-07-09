@@ -22,7 +22,7 @@ export const getAllProducts = async (
     },
   };
   try {
-    const res = await axios.post(`${api}/products`, body, config);
+    const res = await axios.post(`/api/products`, body, config);
     return res.data;
   } catch (err) {
     console.log(err);
