@@ -13,16 +13,15 @@ const AddCategory = ({ history }) => {
   const [formData, setFormData] = useState({
     name: '',
     loading: false,
-    success: false,
   });
 
-  const { name, loading, success } = formData;
+  const { name, loading } = formData;
 
   const onChange = (e) => setFormData({ ...formData, name: e.target.value });
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setFormData({ ...formData, success: false, loading: true });
+    setFormData({ ...formData, loading: true });
     try {
       const res = await addCategory(user, token, { name });
       //res.data means ok response from backend
@@ -31,7 +30,6 @@ const AddCategory = ({ history }) => {
         setFormData({
           name: '',
           loading: false,
-          success: true,
         });
         toast.success(`Category "${res.data.category.name}" created `);
         setTimeout(() => {
@@ -41,7 +39,6 @@ const AddCategory = ({ history }) => {
         setFormData({
           ...formData,
           loading: false,
-          success: false,
         });
         if (res.response && res.response.status === 401) {
           await signout();

@@ -13,10 +13,9 @@ const EditCategory = ({ history, match }) => {
   const [formData, setFormData] = useState({
     name: '',
     loading: true,
-    success: false,
   });
 
-  const { name, loading, success } = formData;
+  const { name, loading } = formData;
 
   useEffect(() => {
     getCategory(match.params.categoryId)
@@ -30,13 +29,13 @@ const EditCategory = ({ history, match }) => {
       .catch((err) => {
         toast.error('Something went wrong. Please try again later!');
       });
-  }, [token]);
+  }, [token, match.params.categoryId]);
 
   const onChange = (e) => setFormData({ ...formData, name: e.target.value });
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setFormData({ ...formData, success: false, loading: true });
+    setFormData({ ...formData, loading: true });
     try {
       const res = await updateCategory(user, token, match.params.categoryId, {
         name,
@@ -47,7 +46,6 @@ const EditCategory = ({ history, match }) => {
         setFormData({
           name: '',
           loading: false,
-          success: true,
         });
         toast.success(`Category updated! `);
         setTimeout(() => {
@@ -57,7 +55,6 @@ const EditCategory = ({ history, match }) => {
         setFormData({
           ...formData,
           loading: false,
-          success: false,
         });
         if (res.response && res.response.status === 401) {
           await signout();

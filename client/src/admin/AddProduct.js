@@ -23,7 +23,6 @@ const AddProduct = ({ history }) => {
     categories: [],
     formData: '',
     loading: true,
-    success: false,
   });
 
   const {
@@ -38,7 +37,6 @@ const AddProduct = ({ history }) => {
     gender,
     formData,
     loading,
-    success,
   } = values;
 
   useEffect(() => {
@@ -85,7 +83,7 @@ const AddProduct = ({ history }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    setvalues({ ...values, success: false, loading: true });
+    setvalues({ ...values, loading: true });
     try {
       const res = await addProduct(user, token, formData);
       if (res.data) {
@@ -101,7 +99,6 @@ const AddProduct = ({ history }) => {
           categories: [],
           formData: '',
           loading: false,
-          success: true,
         });
         toast.success('Product created!');
         setTimeout(() => {
@@ -111,7 +108,6 @@ const AddProduct = ({ history }) => {
         setvalues({
           ...values,
           loading: false,
-          success: false,
         });
       }
       if (res.response && res.response.status === 401) {

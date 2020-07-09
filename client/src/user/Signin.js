@@ -13,30 +13,27 @@ const Signin = ({ history }) => {
     email: '',
     password: '',
     loading: false,
-    success: false,
   });
 
-  const { email, password, loading, success } = formData;
+  const { email, password, loading } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setFormData({ ...formData, success: false, loading: true });
+    setFormData({ ...formData, loading: true });
     const res = await signin({ email, password });
     if (res.data) {
       setFormData({
         email: '',
         password: '',
         loading: false,
-        success: true,
       });
     } else {
       setFormData({
         ...formData,
         loading: false,
-        success: false,
       });
     }
   };

@@ -104,7 +104,11 @@ const Card = ({
             </div>
             <div className='col-md-6 col-sm-6 col-6'>
               {loading ? (
-                <img src={spinner3} style={{ width: '45px', height: '45px' }} />
+                <img
+                  src={spinner3}
+                  alt='Loading spinner'
+                  style={{ width: '45px', height: '45px' }}
+                />
               ) : (
                 <Fragment>
                   {!present ? (

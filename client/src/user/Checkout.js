@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { getCartWithTotal } from './helper/userapicalls';
 import { signout, isAuthenticated } from '../auth/helper';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Spinner from '../core/Spinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';

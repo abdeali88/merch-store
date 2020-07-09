@@ -15,17 +15,16 @@ const Signup = ({ history }) => {
     email: '',
     password: '',
     loading: false,
-    success: false,
   });
 
-  const { firstname, lastname, email, password, loading, success } = formData;
+  const { firstname, lastname, email, password, loading } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setFormData({ ...formData, success: false, loading: true });
+    setFormData({ ...formData, loading: true });
     const res = await signup({ firstname, lastname, email, password });
     if (res.data) {
       setFormData({
@@ -34,13 +33,11 @@ const Signup = ({ history }) => {
         email: '',
         password: '',
         loading: false,
-        success: true,
       });
     } else {
       setFormData({
         ...formData,
         loading: false,
-        success: false,
       });
     }
   };

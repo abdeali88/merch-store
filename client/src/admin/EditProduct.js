@@ -27,7 +27,6 @@ const EditProduct = ({ history, match }) => {
     categories: [],
     formData: '',
     loading: true,
-    success: false,
   });
 
   const {
@@ -42,7 +41,6 @@ const EditProduct = ({ history, match }) => {
     category,
     formData,
     loading,
-    success,
   } = values;
 
   useEffect(() => {
@@ -69,7 +67,6 @@ const EditProduct = ({ history, match }) => {
               value: category._id,
             })),
             formData: new FormData(),
-            success: false,
             loading: false,
           });
         });
@@ -110,7 +107,7 @@ const EditProduct = ({ history, match }) => {
     formData.set('stock', stock);
     formData.set('gender', gender.value);
 
-    setvalues({ ...values, success: false, loading: true });
+    setvalues({ ...values, loading: true });
     try {
       const res = await updateProduct(
         user,
@@ -131,7 +128,6 @@ const EditProduct = ({ history, match }) => {
           categories: [],
           formData: '',
           loading: false,
-          success: true,
         });
         toast.success('Product Updated!');
         setTimeout(() => {
@@ -141,7 +137,6 @@ const EditProduct = ({ history, match }) => {
         setvalues({
           ...values,
           loading: false,
-          success: false,
         });
       }
       if (res.response && res.response.status === 401) {

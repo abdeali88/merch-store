@@ -133,6 +133,7 @@ const Order = ({ match, history }) => {
                             product.product.images[0].data.data
                           ).toString('base64')}`}
                           className='image-fluid order-img'
+                          alt='Product img'
                         />
                       </div>
 

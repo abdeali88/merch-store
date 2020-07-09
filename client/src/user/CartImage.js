@@ -6,6 +6,7 @@ const CartImage = ({ image }) => (
       image.data.data
     ).toString('base64')}`}
     className='image-fluid cart-img'
+    alt='Product img'
   />
 );
 

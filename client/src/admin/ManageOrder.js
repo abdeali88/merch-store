@@ -5,7 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { isAuthenticated, signout } from '../auth/helper';
 import { getAllOrders, updateOrderStatus } from './helper/adminapicall';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Select from 'react-select';
 
 const ManageOrder = ({ history }) => {

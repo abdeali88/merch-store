@@ -26,13 +26,13 @@ const Image = ({ product }) => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [product._id]);
 
   return loading ? (
     <div className='rounded border border-secondary p-2'>
       <img
         src={spinner2}
-        alt='photo'
+        alt='Spinner'
         style={{ maxHeight: '80%', maxWidth: '80%' }}
         className='mb-3 rounded'
       />
@@ -47,6 +47,7 @@ const Image = ({ product }) => {
                 img.data.data
               ).toString('base64')}`}
               className='image-fluid card-img'
+              alt='Product img'
             />
           </div>
         ))}

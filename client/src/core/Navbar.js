@@ -1,23 +1,9 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { signout, isAuthenticated } from '../auth/helper/index';
 import { withRouter } from 'react-router';
-import { getCartProducts } from '../user/helper/userapicalls';
 
 const Navbar = ({ history }) => {
-  // const { user, token } = isAuthenticated();
-
-  // const [cartCount, setCartCount] = useState(0);
-
-  // useEffect(() => {
-  //   if (isAuthenticated()) {
-  //     console.log('NAV IN');
-  //     getCartProducts(user, token).then((getCartProducts) => {
-  //       setCartCount(getCartProducts.length);
-  //     });
-  //   }
-  // }, []);
-
   return (
     <Fragment>
       <nav className='navbar bg-dark'>

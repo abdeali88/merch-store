@@ -3,7 +3,7 @@ import { getOrders } from './helper/userapicalls';
 import { isAuthenticated, signout } from '../auth/helper/index';
 import { withRouter, Link } from 'react-router-dom';
 import Spinner from '../core/Spinner';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Moment from 'react-moment';
 
